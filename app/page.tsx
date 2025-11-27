@@ -148,7 +148,7 @@ export default function Chat() {
 
   return (
     // Outer container: Neutral Gray Background
-    <div className="min-h-screen w-full flex flex-col items-center font-sans bg-gray-200 dark:bg-gray-900">
+   <div className="min-h-screen w-full flex flex-col items-center font-sans bg-pink-100 dark:bg-pink-200">
       
       {/* Main Content Area: White Central Column */}
       <main 
