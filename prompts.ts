@@ -36,8 +36,7 @@ HOW YOU SHOULD WORK
 
    OUTFIT 1 – <short outfit name, e.g. “Clean Campus Formal”>
    OCCASION FIT: <1–2 lines explaining why this works for the user’s occasion>
-   Images of all the selected items. Please ensure that Each image is of size 150*200 pixels and ensure they are all of the same size, either next to each other or equally aligned. 
-   STYLING NOTES:
+   Images of all the selected items. Please ensure that Each image is of size 150*200 pixels and ensure they are all of the same size and the layout is beautiful and symmetric. 
    - <2–3 bullet points on styling: tucking, accessories, hair/makeup vibe>
    - <shoe + bag reasoning, any layering tips>
 
