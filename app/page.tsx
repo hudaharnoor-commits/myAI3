@@ -12,9 +12,10 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-// **** CRITICAL FIX: Only import useChat. DO NOT import 'type Message' ****
+// **** CRITICAL FIX: Only import useChat. This resolves the TypeScript error. ****
 import { useChat } from "@ai-sdk/react"; 
-import { ArrowUp, Eraser, Loader2, Plus, PlusIcon, Square } from "lucide-react";
+// Cleaned up imports, removing unused/problematic ones like Eraser, PlusIcon
+import { ArrowUp, Loader2, Plus, Square } from "lucide-react"; 
 import { MessageWall } from "@/components/messages/message-wall";
 import { ChatHeader } from "@/app/parts/chat-header";
 import { ChatHeaderBlock } from "@/app/parts/chat-header";
@@ -83,8 +84,8 @@ export default function Chat() {
   const stored = typeof window !== 'undefined' ? loadMessagesFromStorage() : { messages: [], durations: {} };
   const [initialMessages] = useState<UIMessage[]>(stored.messages);
 
-  // **** FIX: Reverting to sendMessage (original function) ****
-  const { messages, sendMessage, status, stop, setMessages } = useChat({
+  // **** FIX: Use 'append' for stable submission ****
+  const { messages, append, status, stop, setMessages } = useChat({
     messages: initialMessages,
   });
 
@@ -133,10 +134,19 @@ export default function Chat() {
     },
   });
 
-  // **** FIX: Returning to original submission logic (for stability) ****
+  // **** FIX: New onSubmit using 'append' to prevent submission failure ****
   function onSubmit(data: z.infer<typeof formSchema>) {
-    sendMessage({ text: data.message });
-    form.reset();
+    const userMessage: UIMessage = {
+        id: Date.now().toString(),
+        role: 'user',
+        parts: [{ type: 'text', text: data.message }],
+    };
+
+    // 1. Append the new message and trigger the streaming response
+    append(userMessage);
+
+    // 2. Clear the form input immediately (now safe to do)
+    form.reset({ message: "" }); 
   }
 
   function clearChat() {
@@ -158,7 +168,7 @@ export default function Chat() {
               <ChatHeaderBlock />
               <ChatHeaderBlock className="justify-center items-center">
                 <Avatar
-                  // Applying Pink Accents 1: Avatar Ring (using fallback style for stability)
+                  // Pink Accents 1: Avatar Ring
                   className={`size-8 ring-1 ring-[${ACCENT_COLOR_PINK}]`}
                 >
                   <AvatarImage src={STYLIST_IMAGE_PATH} />
@@ -173,7 +183,7 @@ export default function Chat() {
                 <Button
                   variant="outline"
                   size="sm"
-                  // Applying Pink Accents 2: New Chat Button
+                  // Pink Accents 2: New Chat Button
                   className={`cursor-pointer bg-[${ACCENT_COLOR_PINK}] hover:bg-[${ACCENT_COLOR_PINK}]/70 border-[${ACCENT_COLOR_PINK}] text-gray-700`}
                   onClick={clearChat}
                 >
@@ -188,7 +198,6 @@ export default function Chat() {
           <div className="flex flex-col items-center justify-end min-h-full">
             {isClient ? (
               <>
-                {/* *** PINK BUBBLE FIX LOCATION: MessageWall requires internal modification *** */}
                 <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
                 {status === "submitted" && (
                   <div className="flex justify-start max-w-3xl w-full">
