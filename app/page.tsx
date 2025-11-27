@@ -151,13 +151,11 @@ export default function Chat() {
       
       {/* 2. MAIN CONTENT AREA (The central white scrollable column) */}
       <main 
-        // Set main to take full height and use flex column layout
         className="relative w-full max-w-3xl min-h-screen flex flex-col bg-white dark:bg-gray-800 shadow-xl transition-all duration-300"
       >
         
         {/* === HEADER (Styled & Layered) === */}
         <div 
-          // Header remains sticky at the top of the main window
           className="w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 py-4 px-6 border-b border-muted shadow-md transition-all duration-300 sticky top-0 z-10"
         >
           <ChatHeader>
@@ -174,7 +172,7 @@ export default function Chat() {
             </ChatHeaderBlock>
             <ChatHeaderBlock className="flex justify-end gap-2"> 
               
-              {/* 1. New Chat Button (Pink Accent - Dynamic Hover) */}
+              {/* 1. New Chat Button (PINK Accent - Dynamic Hover) */}
               <Button
                 variant="outline"
                 size="icon" 
@@ -191,13 +189,12 @@ export default function Chat() {
 
         {/* 3. SCROLLABLE CONTENT AREA (Flex-1 for scroll) */}
         <div 
-            // Uses flex-1 to occupy remaining vertical space and allows scrolling
             className="w-full px-6 py-4 flex-1 overflow-y-auto"
         > 
           <div className="flex flex-col items-center justify-end w-full min-h-full"> 
             {isClient ? (
               <>
-                {/* *** ACTION REQUIRED: Your message component must use ACCENT_COLOR_PINK for assistant bubbles *** */}
+                {/* *** PINK BUBBLE FIX LOCATION *** */}
                 <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
                 
                 {status === "submitted" && (
@@ -249,10 +246,10 @@ export default function Chat() {
                             }}
                           />
                           
-                          {/* Send button with hardcoded pink background - Dynamic Hover */}
+                          {/* Send button (PINK Accent) - Dynamic Hover */}
                           {(status == "ready" || status == "error") && (
                             <Button
-                              // Hardcoded pink background for ACCENT
+                              // Hardcoded PINK background for ACCENT
                               className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-[${ACCENT_COLOR_PINK}] text-gray-800 transition-all duration-200 hover:translate-y-[-55%]`}
                               type="submit"
                               disabled={!field.value.trim()}
