@@ -20,14 +20,17 @@ import { ChatHeaderBlock } from "@/app/parts/chat-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UIMessage } from "ai";
 import { useEffect, useState, useRef } from "react";
-// Replaced AI_NAME with 'Ava' in the display logic below
-import { CLEAR_CHAT_TEXT, OWNER_NAME, WELCOME_MESSAGE } from "@/config"; 
+// Import constants from the config file
+import { AI_NAME, CLEAR_CHAT_TEXT, OWNER_NAME, WELCOME_MESSAGE } from "@/config"; 
 import Image from "next/image";
 import Link from "next/link";
 
 // Define the Stylist's Name and Image Path
-const STYLIST_NAME = "Ava, your Stylist";
-const STYLIST_IMAGE_PATH = "https://files.catbox.moe/hcek6h.png"; // <-- *** You need to place the stylist image here ***
+const STYLIST_NAME = AI_NAME;
+const STYLIST_IMAGE_PATH = "/stylist-avatar.jpg";
+
+// Define the required custom color
+const ACCENT_COLOR_HEX = "#FFD1DC"; 
 
 const formSchema = z.object({
   message: z
@@ -142,53 +145,64 @@ export default function Chat() {
   }
 
   return (
-    // Outer container for the background color and centering
-    <div className="flex h-screen items-center justify-center font-sans bg-gray-100 dark:bg-gray-900 p-4">
+    // Outer container for the full-screen background
+    <div className="flex h-screen w-full items-center justify-center font-sans bg-gray-100 dark:bg-gray-900">
       
-      {/* === MAIN CHAT CARD (Professional Card Look) === */}
+      {/* === MAIN CONTENT AREA (Full Height/Width, no size limits) === */}
       <main 
-        className="relative w-full max-w-lg h-[650px] bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden transition-all duration-300"
+        // Changed from the constrained card to full height/width
+        className="relative w-full h-full bg-white dark:bg-gray-800 transition-all duration-300"
       >
         
-        {/* === HEADER (Fixed and integrated into the card) === */}
+        {/* === FIXED HEADER === */}
         <div 
-          className="absolute top-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 py-4 px-6 border-b border-muted transition-all duration-300"
+          className="fixed top-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 py-4 px-6 border-b border-muted shadow-md transition-all duration-300"
         >
-          <ChatHeader>
-            <ChatHeaderBlock className="flex items-center gap-3">
-              <Avatar
-                // Added STYLIST_IMAGE_PATH and used soft colors for ring/fallback
-                className="size-12 ring-2 ring-pink-300/80 border-2 border-white dark:border-gray-800" 
-              >
-                <AvatarImage src={STYLIST_IMAGE_PATH} alt="Ava, Stylist Avatar" />
-                <AvatarFallback className="bg-pink-100 text-pink-700 font-bold">A</AvatarFallback>
-              </Avatar>
-              {/* Changed text to Ava's name */}
-              <p className="font-semibold text-lg text-foreground">Chat with {STYLIST_NAME} </p> 
-            </ChatHeaderBlock>
-            <ChatHeaderBlock className="flex justify-end">
-              <Button
-                variant="outline"
-                size="sm"
-                // Soft button style matching the image's accent
-                className="cursor-pointer text-sm font-medium rounded-full px-4 py-2 flex items-center gap-1 bg-pink-100/70 hover:bg-pink-100 transition-colors border-pink-200 text-pink-700" 
-                onClick={clearChat}
-              >
-                <Plus className="size-4" />
-                New Chat
-              </Button>
-            </ChatHeaderBlock>
-          </ChatHeader>
+          {/* Content container is max-width centered to prevent header content from stretching too wide */}
+          <div className="flex justify-center w-full"> 
+            <div className="max-w-3xl w-full"> 
+              <ChatHeader>
+                <ChatHeaderBlock className="flex items-center gap-3">
+                  <Avatar
+                    // Custom color ring for the avatar
+                    className={`size-12 ring-2 ring-[${ACCENT_COLOR_HEX}] border-2 border-white dark:border-gray-800`} 
+                  >
+                    <AvatarImage src={STYLIST_IMAGE_PATH} alt={`${STYLIST_NAME} Avatar`} />
+                    {/* Custom color fallback background */}
+                    <AvatarFallback className={`bg-[${ACCENT_COLOR_HEX}] text-gray-700 font-bold`}>A</AvatarFallback>
+                  </Avatar>
+                  {/* Removed double asterisks */}
+                  <p className="font-semibold text-lg text-foreground">Chat with {STYLIST_NAME}</p> 
+                </ChatHeaderBlock>
+                <ChatHeaderBlock className="flex justify-end">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    // Custom color button background and border
+                    className={`cursor-pointer text-sm font-medium rounded-full px-4 py-2 flex items-center gap-1 bg-[${ACCENT_COLOR_HEX}] hover:bg-[${ACCENT_COLOR_HEX}]/70 transition-colors border-[${ACCENT_COLOR_HEX}] text-gray-700`} 
+                    onClick={clearChat}
+                  >
+                    <Plus className="size-4" />
+                    {CLEAR_CHAT_TEXT}
+                  </Button>
+                </ChatHeaderBlock>
+              </ChatHeader>
+            </div>
+          </div>
         </div>
 
-        {/* === MESSAGE WALL CONTAINER === */}
-        <div className="h-full overflow-y-auto px-6 py-4 pt-[96px] pb-[136px]"> 
+        {/* === MESSAGE WALL CONTAINER (Scrollable full height content) === */}
+        {/* Padding updated to accommodate fixed header and footer */}
+        <div className="h-full overflow-y-auto w-full px-6 py-4 pt-[96px] pb-[136px]"> 
           <div className="flex flex-col items-center justify-end min-h-full">
             {isClient ? (
               <>
-                <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
+                {/* MessageWall content centered within a max-width container */}
+                <div className="max-w-3xl w-full"> 
+                    <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
+                </div>
                 {status === "submitted" && (
-                  <div className="flex justify-start max-w-sm w-full pt-4"> 
+                  <div className="flex justify-start max-w-3xl w-full pt-4"> 
                     <Loader2 className="size-5 animate-spin text-primary" />
                   </div>
                 )}
@@ -201,12 +215,12 @@ export default function Chat() {
           </div>
         </div>
 
-        {/* === FLOATING INPUT FOOTER === */}
+        {/* === FIXED FLOATING INPUT FOOTER === */}
         <div 
-          className="absolute bottom-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 pt-5 px-6 pb-4 shadow-xl transition-all duration-300" 
+          className="fixed bottom-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 pt-5 px-6 pb-4 shadow-xl transition-all duration-300" 
         >
           <div className="w-full flex justify-center relative">
-            <div className="w-full">
+            <div className="max-w-3xl w-full"> {/* Input container max-width centered */}
               <form id="chat-form" onSubmit={form.handleSubmit(onSubmit)} className="mb-2">
                 <FieldGroup>
                   <Controller
@@ -221,7 +235,7 @@ export default function Chat() {
                           <Input
                             {...field}
                             id="chat-form-message"
-                            // Extreme rounding for the capsule look
+                            // Capsule look input
                             className="h-full w-full pr-16 pl-6 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 focus-visible:ring-primary shadow-inner rounded-full transition-all duration-300 placeholder:text-gray-400 text-base" 
                             placeholder="Type your message here..."
                             disabled={status === "streaming"}
@@ -235,10 +249,10 @@ export default function Chat() {
                             }}
                           />
                           
-                          {/* Send button with soft accent color */}
+                          {/* Send button with custom color background */}
                           {(status == "ready" || status == "error") && (
                             <Button
-                              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-pink-300/50 hover:bg-pink-300/80 text-white transition-colors"
+                              className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-[${ACCENT_COLOR_HEX}] text-gray-800 hover:bg-[${ACCENT_COLOR_HEX}]/70 transition-colors`}
                               type="submit"
                               disabled={!field.value.trim()}
                               size="icon"
