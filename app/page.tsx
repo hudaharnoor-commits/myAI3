@@ -135,8 +135,8 @@ export default function Chat() {
     // 1. Send the message payload
     sendMessage({ text: data.message });
     
-    // 2. Clear the form input immediately after submission is initiated
-    // This is the common pattern fix for useChat/react-hook-form conflicts
+    // 2. IMPORTANT FIX: Reset the form input immediately after submission is initiated
+    // This ensures the input field is cleared for the next message, preventing conflicts.
     form.reset({ message: "" }); 
   }
 
@@ -169,14 +169,14 @@ export default function Chat() {
                 className={`size-12 ring-2 ring-[${NEUTRAL_ACCENT_LIGHT}] border-2 border-white dark:border-gray-800`} 
               >
                 <AvatarImage src={STYLIST_IMAGE_PATH} alt={`${STYLIST_NAME} Avatar`} />
-                {/* Pink fallback background (The intended Pink Accent 1) */}
+                {/* Pink fallback background */}
                 <AvatarFallback className={`bg-[${ACCENT_COLOR_PINK}] text-gray-700 font-bold`}>A</AvatarFallback>
               </Avatar>
               <p className="font-semibold text-lg text-foreground">Chat with {STYLIST_NAME}</p> 
             </ChatHeaderBlock>
             <ChatHeaderBlock className="flex justify-end gap-2"> 
               
-              {/* 1. New Chat Button (Pink Accent - Visible Pink Accent 2) */}
+              {/* 1. New Chat Button (Pink Accent) */}
               <Button
                 variant="outline"
                 size="icon" 
@@ -241,6 +241,7 @@ export default function Chat() {
                             disabled={status === "streaming"}
                             aria-invalid={fieldState.invalid}
                             autoComplete="off"
+                            // Ensure Enter key submission also calls the fixed onSubmit
                             onKeyDown={(e) => {
                               if (e.key === "Enter" && !e.shiftKey) {
                                 e.preventDefault();
@@ -249,7 +250,7 @@ export default function Chat() {
                             }}
                           />
                           
-                          {/* Send button (Pink Accent - Visible Pink Accent 3) */}
+                          {/* Send button (Pink Accent) */}
                           {(status == "ready" || status == "error") && (
                             <Button
                               // Hardcoded PINK background for ACCENT
