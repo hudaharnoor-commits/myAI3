@@ -97,22 +97,23 @@ export async function POST(req: Request) {
 
     // 🔹 2. Main model call with SAFE tools
     const result = streamText({
-      model: MODEL,
-      system: SYSTEM_PROMPT,
-      messages: convertToModelMessages(messages),
-      tools: {
-        webSearch: safeWebSearch,
-        vectorDatabaseSearch: safeVectorDatabaseSearch,
-      },
-      stopWhen: stepCountIs(10),
-      providerOptions: {
-        openai: {
-          reasoningSummary: "auto",
-          reasoningEffort: "low",
-          parallelToolCalls: false,
-        },
-      },
-    });
+  model: MODEL,
+  system: SYSTEM_PROMPT,
+  messages: convertToModelMessages(messages),
+  tools: {
+    webSearch: safeWebSearch,
+    vectorDatabaseSearch: safeVectorDatabaseSearch,
+  },
+  stopWhen: stepCountIs(10),
+  providerOptions: {
+    openai: {
+      reasoningSummary: "auto",
+      reasoningEffort: "low",
+      parallelToolCalls: false,
+    },
+  },
+});
+
 
     return result.toUIMessageStreamResponse({
       sendReasoning: true,
