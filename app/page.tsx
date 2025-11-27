@@ -20,9 +20,14 @@ import { ChatHeaderBlock } from "@/app/parts/chat-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UIMessage } from "ai";
 import { useEffect, useState, useRef } from "react";
-import { AI_NAME, CLEAR_CHAT_TEXT, OWNER_NAME, WELCOME_MESSAGE } from "@/config";
+// Replaced AI_NAME with 'Ava' in the display logic below
+import { CLEAR_CHAT_TEXT, OWNER_NAME, WELCOME_MESSAGE } from "@/config"; 
 import Image from "next/image";
 import Link from "next/link";
+
+// Define the Stylist's Name and Image Path
+const STYLIST_NAME = "Ava, your Stylist";
+const STYLIST_IMAGE_PATH = "/stylist-avatar.jpg"; // <-- *** You need to place the stylist image here ***
 
 const formSchema = z.object({
   message: z
@@ -80,8 +85,7 @@ export default function Chat() {
   useEffect(() => {
     setIsClient(true);
     setDurations(stored.durations);
-    // Setting messages again here is kept from your original code, though sometimes redundant
-    setMessages(stored.messages); 
+    setMessages(stored.messages);
   }, []);
 
   useEffect(() => {
@@ -141,34 +145,36 @@ export default function Chat() {
     // Outer container for the background color and centering
     <div className="flex h-screen items-center justify-center font-sans bg-gray-100 dark:bg-gray-900 p-4">
       
-      {/* === MAIN CHAT CARD (Matches the prominent, rounded card in the image) === */}
+      {/* === MAIN CHAT CARD (Professional Card Look) === */}
       <main 
         className="relative w-full max-w-lg h-[650px] bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden transition-all duration-300"
       >
         
-        {/* === HEADER (Fixed and integrated into the card, no className on ChatHeader) === */}
+        {/* === HEADER (Fixed and integrated into the card) === */}
         <div 
           className="absolute top-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 py-4 px-6 border-b border-muted transition-all duration-300"
         >
-          {/* We style the content *around* ChatHeader components */}
           <ChatHeader>
             <ChatHeaderBlock className="flex items-center gap-3">
               <Avatar
-                className="size-12 ring-2 ring-primary/50 border-2 border-white dark:border-gray-800" // Prominent ring
+                // Added STYLIST_IMAGE_PATH and used soft colors for ring/fallback
+                className="size-12 ring-2 ring-pink-300/80 border-2 border-white dark:border-gray-800" 
               >
-                <AvatarImage src="/logo.png" />
-                <AvatarFallback className="bg-muted text-foreground">AI</AvatarFallback>
+                <AvatarImage src={STYLIST_IMAGE_PATH} alt="Ava, Stylist Avatar" />
+                <AvatarFallback className="bg-pink-100 text-pink-700 font-bold">A</AvatarFallback>
               </Avatar>
-              <p className="font-semibold text-lg text-foreground">Chat with **{AI_NAME}**</p>
+              {/* Changed text to Ava's name */}
+              <p className="font-semibold text-lg text-foreground">Chat with **{STYLIST_NAME}**</p> 
             </ChatHeaderBlock>
             <ChatHeaderBlock className="flex justify-end">
               <Button
                 variant="outline"
                 size="sm"
-                className="cursor-pointer text-sm font-medium rounded-full px-4 py-2 flex items-center gap-1 bg-primary/10 hover:bg-primary/20 transition-colors border-primary/20" // Simulates the soft accent button
+                // Soft button style matching the image's accent
+                className="cursor-pointer text-sm font-medium rounded-full px-4 py-2 flex items-center gap-1 bg-pink-100/70 hover:bg-pink-100 transition-colors border-pink-200 text-pink-700" 
                 onClick={clearChat}
               >
-                <Plus className="size-4 text-primary" />
+                <Plus className="size-4" />
                 New Chat
               </Button>
             </ChatHeaderBlock>
@@ -176,7 +182,6 @@ export default function Chat() {
         </div>
 
         {/* === MESSAGE WALL CONTAINER === */}
-        {/* Adjusted padding to fit inside the card and avoid fixed header/footer */}
         <div className="h-full overflow-y-auto px-6 py-4 pt-[96px] pb-[136px]"> 
           <div className="flex flex-col items-center justify-end min-h-full">
             {isClient ? (
@@ -196,7 +201,7 @@ export default function Chat() {
           </div>
         </div>
 
-        {/* === FLOATING INPUT FOOTER (Matches the capsule input in the image) === */}
+        {/* === FLOATING INPUT FOOTER === */}
         <div 
           className="absolute bottom-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 pt-5 px-6 pb-4 shadow-xl transition-all duration-300" 
         >
@@ -230,10 +235,10 @@ export default function Chat() {
                             }}
                           />
                           
-                          {/* Send button */}
+                          {/* Send button with soft accent color */}
                           {(status == "ready" || status == "error") && (
                             <Button
-                              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-primary/20 hover:bg-primary/30 text-primary transition-colors"
+                              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-pink-300/50 hover:bg-pink-300/80 text-white transition-colors"
                               type="submit"
                               disabled={!field.value.trim()}
                               size="icon"
