@@ -26,7 +26,7 @@ import Link from "next/link";
 
 // Define the Stylist's Name and Image Path
 const STYLIST_NAME = AI_NAME;
-const STYLIST_IMAGE_PATH = "/stylist-avatar.jpg";
+const STYLIST_IMAGE_PATH = "https://files.catbox.moe/hcek6h.png";
 
 // Define the required custom color (HARDCODED for Tailwind stability)
 const ACCENT_COLOR_HEX = "#FFD1DC"; 
