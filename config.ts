@@ -33,7 +33,15 @@ export const DATE_AND_TIME = getDateAndTime();
 export const AI_NAME = "PersonalDesigner";
 export const OWNER_NAME = "Rishi Agrawal";
 
-export const WELCOME_MESSAGE = `Hello! I'm ${AI_NAME}, an AI assistant created by ${OWNER_NAME}.`
+export const WELCOME_MESSAGE = `Hi, I’m PersonalDesigner – your AI wardrobe stylist.
+
+Tell me: 
+1) What’s the occasion today (business formal, business casual, college, brunch, party, travel, date, etc.)?
+2) Where are you going (office, campus, mall, restaurant, club, airport, etc.)?
+3) Any pieces you want to wear or avoid?
+
+I’ll build 1–3 outfits using ONLY clothes from your own closet and share the image links for each item.
+`;
 
 export const CLEAR_CHAT_TEXT = "New";
 
