@@ -12,28 +12,27 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-// **** CRITICAL CHANGE 1: REMOVED INCORRECT TYPE IMPORT ****
-import { useChat } from "@ai-sdk/react";
-import { ArrowUp, Loader2, Plus, Square } from "lucide-react"; 
+// **** CRITICAL FIX 1: Import useChat and UIMessage (re-confirmed for stability) ****
+import { useChat, type Message } from "@ai-sdk/react";
+import { ArrowUp, Eraser, Loader2, Plus, PlusIcon, Square } from "lucide-react";
 import { MessageWall } from "@/components/messages/message-wall";
 import { ChatHeader } from "@/app/parts/chat-header";
 import { ChatHeaderBlock } from "@/app/parts/chat-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-// NOTE: UIMessage is already correctly imported from 'ai'
-import { UIMessage } from "ai"; 
+import { UIMessage } from "ai";
 import { useEffect, useState, useRef } from "react";
-// Import constants from the config file
-import { AI_NAME, CLEAR_CHAT_TEXT, OWNER_NAME, WELCOME_MESSAGE } from "@/config"; 
+import { AI_NAME, CLEAR_CHAT_TEXT, OWNER_NAME, WELCOME_MESSAGE } from "@/config";
 import Image from "next/image";
 import Link from "next/link";
 
 // Define the Stylist's Name and Image Path
 const STYLIST_NAME = AI_NAME;
-const STYLIST_IMAGE_PATH = "https://files.catbox.moe/hcek6h.png"; 
+const STYLIST_IMAGE_PATH = "/logo.png"; 
 
 // Define the custom colors: This is the pink hue used for accents
 const ACCENT_COLOR_PINK = "#FFD1DC"; 
 const NEUTRAL_ACCENT_LIGHT = "#E0E0E0"; // Light gray used for fallback/neutral UI parts
+
 
 const formSchema = z.object({
   message: z
@@ -84,7 +83,8 @@ export default function Chat() {
   const stored = typeof window !== 'undefined' ? loadMessagesFromStorage() : { messages: [], durations: {} };
   const [initialMessages] = useState<UIMessage[]>(stored.messages);
 
-  // **** CRITICAL CHANGE 2: Destructure 'append' instead of 'sendMessage' ****
+  // **** CRITICAL FIX 2: Destructure 'append' instead of 'sendMessage' ****
+  // This fixes the "every 2nd output fails" bug by robustly managing history.
   const { messages, append, status, stop, setMessages } = useChat({
     messages: initialMessages,
   });
@@ -134,7 +134,7 @@ export default function Chat() {
     },
   });
 
-  // **** CRITICAL CHANGE 3: Update onSubmit to use 'append' ****
+  // **** CRITICAL FIX 3: Update onSubmit to use 'append' ****
   function onSubmit(data: z.infer<typeof formSchema>) {
     // 1. Manually construct the user message object using UIMessage structure
     const userMessage: UIMessage = {
@@ -143,8 +143,7 @@ export default function Chat() {
         parts: [{ type: 'text', text: data.message }],
     };
 
-    // 2. Append the new message and trigger the streaming response (This fixes the 2nd prompt failure)
-    // NOTE: 'append' correctly takes UIMessage type structure from 'ai' package.
+    // 2. Append the new message and trigger the streaming response
     append(userMessage);
 
     // 3. Clear the form input immediately (now safe to do)
@@ -161,77 +160,64 @@ export default function Chat() {
   }
 
   return (
-    // Outer container for the full-screen neutral background
-    <div className="min-h-screen w-full flex flex-col items-center font-sans bg-gray-200 dark:bg-gray-900">
-      
-      {/* 2. MAIN CONTENT AREA (The central white scrollable column) */}
-      <main 
-        className="relative w-full max-w-3xl min-h-screen flex flex-col bg-white dark:bg-gray-800 shadow-xl transition-all duration-300"
-      >
-        
-        {/* === HEADER (Styled & Layered) === */}
-        <div 
-          className="w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 py-4 px-6 border-b border-muted shadow-md transition-all duration-300 sticky top-0 z-10"
-        >
-          <ChatHeader>
-            <ChatHeaderBlock className="flex items-center gap-3">
-              <Avatar
-                // Neutral gray ring
-                className={`size-12 ring-2 ring-[${NEUTRAL_ACCENT_LIGHT}] border-2 border-white dark:border-gray-800`} 
-              >
-                <AvatarImage src={STYLIST_IMAGE_PATH} alt={`${STYLIST_NAME} Avatar`} />
-                {/* Pink fallback background */}
-                <AvatarFallback className={`bg-[${ACCENT_COLOR_PINK}] text-gray-700 font-bold`}>A</AvatarFallback>
-              </Avatar>
-              <p className="font-semibold text-lg text-foreground">Chat with {STYLIST_NAME}</p> 
-            </ChatHeaderBlock>
-            <ChatHeaderBlock className="flex justify-end gap-2"> 
-              
-              {/* 1. New Chat Button (Pink Accent - Visible Pink Accent 1) */}
-              <Button
-                variant="outline"
-                size="icon" 
-                // Hardcoded PINK background for ACCENT
-                className={`cursor-pointer rounded-full h-10 w-10 flex items-center justify-center bg-[${ACCENT_COLOR_PINK}] hover:bg-[${ACCENT_COLOR_PINK}]/70 transition-all duration-200 border-[${ACCENT_COLOR_PINK}] text-gray-700 hover:scale-[1.05]`} 
-                onClick={clearChat}
-                title="Start new chat"
-              >
-                <Plus className="size-4" />
-              </Button>
-            </ChatHeaderBlock>
-          </ChatHeader>
+    // Outer container with neutral background (per original code's style)
+    <div className="flex h-screen items-center justify-center font-sans dark:bg-black">
+      <main className="w-full dark:bg-black h-screen relative">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-linear-to-b from-background via-background/50 to-transparent dark:bg-black overflow-visible pb-16">
+          <div className="relative overflow-visible">
+            <ChatHeader>
+              <ChatHeaderBlock />
+              <ChatHeaderBlock className="justify-center items-center">
+                <Avatar
+                  // Applying Pink Accents 1: Avatar Ring (using fallback style for stability)
+                  className={`size-8 ring-1 ring-[${ACCENT_COLOR_PINK}]`}
+                >
+                  <AvatarImage src={STYLIST_IMAGE_PATH} />
+                  <AvatarFallback className={`bg-[${ACCENT_COLOR_PINK}]`}>
+                    <Image src="/logo.png" alt="Logo" width={36} height={36} />
+                  </AvatarFallback>
+                </Avatar>
+                <p className="tracking-tight">Chat with {STYLIST_NAME}</p>
+              </ChatHeaderBlock>
+              <ChatHeaderBlock className="justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  // Applying Pink Accents 2: New Chat Button
+                  className={`cursor-pointer bg-[${ACCENT_COLOR_PINK}] hover:bg-[${ACCENT_COLOR_PINK}]/70 border-[${ACCENT_COLOR_PINK}] text-gray-700`}
+                  onClick={clearChat}
+                >
+                  <Plus className="size-4" />
+                  {CLEAR_CHAT_TEXT}
+                </Button>
+              </ChatHeaderBlock>
+            </ChatHeader>
+          </div>
         </div>
-
-        {/* 3. SCROLLABLE CONTENT AREA (Flex-1 for scroll) */}
-        <div 
-            className="w-full px-6 py-4 flex-1 overflow-y-auto"
-        > 
-          <div className="flex flex-col items-center justify-end w-full min-h-full"> 
+        <div className="h-screen overflow-y-auto px-5 py-4 w-full pt-[88px] pb-[150px]">
+          <div className="flex flex-col items-center justify-end min-h-full">
             {isClient ? (
               <>
+                {/* *** PINK BUBBLE FIX LOCATION: MessageWall requires internal modification *** */}
                 <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
-                
                 {status === "submitted" && (
-                  <div className="flex justify-start w-full pt-4"> 
-                    <Loader2 className="size-5 animate-spin text-primary" />
+                  <div className="flex justify-start max-w-3xl w-full">
+                    <Loader2 className="size-4 animate-spin text-muted-foreground" />
                   </div>
                 )}
               </>
             ) : (
-              <div className="flex justify-center w-full">
-                <Loader2 className="size-6 animate-spin text-primary" /> 
+              <div className="flex justify-center max-w-2xl w-full">
+                <Loader2 className="size-4 animate-spin text-muted-foreground" />
               </div>
             )}
           </div>
         </div>
-
-        {/* === INPUT FOOTER === */}
-        <div 
-          className="w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 pt-5 px-6 pb-4 shadow-xl transition-all duration-300 sticky bottom-0 z-10" 
-        >
-          <div className="w-full flex justify-center relative">
-            <div className="w-full"> 
-              <form id="chat-form" onSubmit={form.handleSubmit(onSubmit)} className="mb-2">
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-linear-to-t from-background via-background/50 to-transparent dark:bg-black overflow-visible pt-13">
+          <div className="w-full px-5 pt-5 pb-1 items-center flex justify-center relative overflow-visible">
+            <div className="message-fade-overlay" />
+            <div className="max-w-3xl w-full">
+              <form id="chat-form" onSubmit={form.handleSubmit(onSubmit)}>
                 <FieldGroup>
                   <Controller
                     name="message"
@@ -241,12 +227,11 @@ export default function Chat() {
                         <FieldLabel htmlFor="chat-form-message" className="sr-only">
                           Message
                         </FieldLabel>
-                        <div className="relative h-14">
+                        <div className="relative h-13">
                           <Input
                             {...field}
                             id="chat-form-message"
-                            // Capsule look input
-                            className="h-full w-full pr-16 pl-6 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 focus-visible:ring-primary shadow-inner rounded-full transition-all duration-300 placeholder:text-gray-400 text-base" 
+                            className="h-15 pr-15 pl-5 bg-card rounded-[20px]"
                             placeholder="Type your message here..."
                             disabled={status === "streaming"}
                             aria-invalid={fieldState.invalid}
@@ -258,24 +243,21 @@ export default function Chat() {
                               }
                             }}
                           />
-                          
-                          {/* Send button (Pink Accent - Visible Pink Accent 3) */}
                           {(status == "ready" || status == "error") && (
                             <Button
-                              // Hardcoded PINK background for ACCENT
-                              className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-[${ACCENT_COLOR_PINK}] text-gray-800 transition-all duration-200 hover:translate-y-[-55%]`}
+                              className="absolute right-3 top-3 rounded-full"
                               type="submit"
                               disabled={!field.value.trim()}
                               size="icon"
+                              // Applying Pink Accents 3: Send Button
+                              style={{ backgroundColor: ACCENT_COLOR_PINK, color: '#4A4A4A' }}
                             >
-                              <ArrowUp className="size-5" />
+                              <ArrowUp className="size-4" />
                             </Button>
                           )}
-                          
-                          {/* Stop button */}
                           {(status == "streaming" || status == "submitted") && (
                             <Button
-                              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 bg-destructive hover:bg-destructive/90 shadow-md"
+                              className="absolute right-2 top-2 rounded-full"
                               size="icon"
                               onClick={() => {
                                 stop();
@@ -292,18 +274,11 @@ export default function Chat() {
               </form>
             </div>
           </div>
-          
-          {/* === FOOTER LINKS === */}
-          <div className="w-full px-5 py-2 flex justify-center text-xs text-muted-foreground">
-            <p className="text-center font-medium">
-              © {new Date().getFullYear()} {OWNER_NAME}&nbsp;·&nbsp;
-              <Link href="/terms" className="underline underline-offset-2 hover:text-foreground/80 transition-colors">Terms of Use</Link>
-              &nbsp;·&nbsp;Powered by&nbsp;
-              <Link href="https://ringel.ai/" className="underline underline-offset-2 hover:text-foreground/80 transition-colors">Ringel.AI</Link>
-            </p>
+          <div className="w-full px-5 py-3 items-center flex justify-center text-xs text-muted-foreground">
+            © {new Date().getFullYear()} {OWNER_NAME}&nbsp;<Link href="/terms" className="underline">Terms of Use</Link>&nbsp;Powered by&nbsp;<Link href="https://ringel.ai/" className="underline">Ringel.AI</Link>
           </div>
         </div>
       </main>
-    </div>
+    </div >
   );
 }
