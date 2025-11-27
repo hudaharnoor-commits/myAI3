@@ -12,7 +12,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useChat } from "@ai-sdk/react";
+// **** CRITICAL CHANGE 1: Import 'append' instead of 'sendMessage' ****
+import { useChat, type Message } from "@ai-sdk/react";
 import { ArrowUp, Loader2, Plus, Square } from "lucide-react"; 
 import { MessageWall } from "@/components/messages/message-wall";
 import { ChatHeader } from "@/app/parts/chat-header";
@@ -82,7 +83,8 @@ export default function Chat() {
   const stored = typeof window !== 'undefined' ? loadMessagesFromStorage() : { messages: [], durations: {} };
   const [initialMessages] = useState<UIMessage[]>(stored.messages);
 
-  const { messages, sendMessage, status, stop, setMessages } = useChat({
+  // **** CRITICAL CHANGE 2: Destructure 'append' instead of 'sendMessage' ****
+  const { messages, append, status, stop, setMessages } = useChat({
     messages: initialMessages,
   });
 
@@ -131,12 +133,19 @@ export default function Chat() {
     },
   });
 
+  // **** CRITICAL CHANGE 3: Update onSubmit to use 'append' ****
   function onSubmit(data: z.infer<typeof formSchema>) {
-    // 1. Send the message payload
-    sendMessage({ text: data.message });
-    
-    // 2. IMPORTANT FIX: Reset the form input immediately after submission is initiated
-    // This ensures the input field is cleared for the next message, preventing conflicts.
+    // 1. Manually construct the user message object
+    const userMessage: Message = {
+        id: Date.now().toString(),
+        role: 'user',
+        content: data.message,
+    };
+
+    // 2. Append the new message and trigger the streaming response
+    append(userMessage);
+
+    // 3. Clear the form input immediately (now safe to do)
     form.reset({ message: "" }); 
   }
 
@@ -176,7 +185,7 @@ export default function Chat() {
             </ChatHeaderBlock>
             <ChatHeaderBlock className="flex justify-end gap-2"> 
               
-              {/* 1. New Chat Button (Pink Accent) */}
+              {/* 1. New Chat Button (Pink Accent - Visible Pink Accent) */}
               <Button
                 variant="outline"
                 size="icon" 
@@ -198,7 +207,6 @@ export default function Chat() {
           <div className="flex flex-col items-center justify-end w-full min-h-full"> 
             {isClient ? (
               <>
-                {/* MessageWall (Needs internal fix for pink bubbles) */}
                 <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
                 
                 {status === "submitted" && (
