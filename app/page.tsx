@@ -13,8 +13,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useChat } from "@ai-sdk/react";
-// Import all necessary icons, including the new side icons
-import { ArrowUp, Loader2, Plus, Square, Image as ImageIcon, Settings } from "lucide-react"; 
+import { ArrowUp, Loader2, Plus, Square } from "lucide-react";
 import { MessageWall } from "@/components/messages/message-wall";
 import { ChatHeader } from "@/app/parts/chat-header";
 import { ChatHeaderBlock } from "@/app/parts/chat-header";
@@ -28,9 +27,9 @@ import Link from "next/link";
 
 // Define the Stylist's Name and Image Path
 const STYLIST_NAME = AI_NAME;
-const STYLIST_IMAGE_PATH = "https://files.catbox.moe/hcek6h.png"; 
+const STYLIST_IMAGE_PATH = "https://files.catbox.moe/hcek6h.png";
 
-// Define the required custom color (HARDCODED for Tailwind stability)
+// Define the required custom color
 const ACCENT_COLOR_HEX = "#FFD1DC"; 
 
 const formSchema = z.object({
@@ -144,77 +143,47 @@ export default function Chat() {
     saveMessagesToStorage(newMessages, newDurations);
     toast.success("Chat cleared");
   }
-  
-  // Placeholder functions for the new side buttons
-  const handleImageClick = () => {
-    toast.info("Image generation feature coming soon!");
-  };
-
-  const handleSettingsClick = () => {
-    toast.info("Settings panel coming soon!");
-  };
 
   return (
     // Outer container for the full-screen background
     <div className="flex h-screen w-full items-center justify-center font-sans bg-gray-100 dark:bg-gray-900">
       
-      {/* === MAIN CONTENT AREA (Seamless UI Integration) === */}
+      {/* === MAIN CONTENT AREA (Full Height/Width, no size limits) === */}
       <main 
+        // Changed from the constrained card to full height/width
         className="relative w-full h-full bg-white dark:bg-gray-800 transition-all duration-300"
       >
         
-        {/* === FIXED HEADER (Professional & Styled) === */}
+        {/* === FIXED HEADER === */}
         <div 
           className="fixed top-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 py-4 px-6 border-b border-muted shadow-md transition-all duration-300"
         >
+          {/* Content container is max-width centered to prevent header content from stretching too wide */}
           <div className="flex justify-center w-full"> 
             <div className="max-w-3xl w-full"> 
               <ChatHeader>
                 <ChatHeaderBlock className="flex items-center gap-3">
                   <Avatar
-                    // Hardcoded pink ring
-                    className="size-12 ring-2 ring-[#FFD1DC] border-2 border-white dark:border-gray-800" 
+                    // Custom color ring for the avatar
+                    className={`size-12 ring-2 ring-[${ACCENT_COLOR_HEX}] border-2 border-white dark:border-gray-800`} 
                   >
                     <AvatarImage src={STYLIST_IMAGE_PATH} alt={`${STYLIST_NAME} Avatar`} />
-                    {/* Hardcoded pink fallback background */}
-                    <AvatarFallback className="bg-[#FFD1DC] text-gray-700 font-bold">A</AvatarFallback>
+                    {/* Custom color fallback background */}
+                    <AvatarFallback className={`bg-[${ACCENT_COLOR_HEX}] text-gray-700 font-bold`}>A</AvatarFallback>
                   </Avatar>
-                  {/* Styled text, no double asterisks */}
+                  {/* Removed double asterisks */}
                   <p className="font-semibold text-lg text-foreground">Chat with {STYLIST_NAME}</p> 
                 </ChatHeaderBlock>
-                <ChatHeaderBlock className="flex justify-end gap-2"> 
-                  
-                  {/* 1. New Chat Button (Pink Accent) - Subtle scale on hover */}
+                <ChatHeaderBlock className="flex justify-end">
                   <Button
                     variant="outline"
-                    size="icon" 
-                    className="cursor-pointer rounded-full h-10 w-10 flex items-center justify-center bg-[#FFD1DC] hover:bg-[#FFD1DC]/70 transition-all duration-200 border-[#FFD1DC] text-gray-700 hover:scale-[1.05]" 
+                    size="sm"
+                    // Custom color button background and border
+                    className={`cursor-pointer text-sm font-medium rounded-full px-4 py-2 flex items-center gap-1 bg-[${ACCENT_COLOR_HEX}] hover:bg-[${ACCENT_COLOR_HEX}]/70 transition-colors border-[${ACCENT_COLOR_HEX}] text-gray-700`} 
                     onClick={clearChat}
-                    title="Start new chat"
                   >
                     <Plus className="size-4" />
-                  </Button>
-
-                  {/* 2. Image Icon Button (Utility) - Subtle scale on hover */}
-                  <Button
-                    variant="ghost" 
-                    size="icon"
-                    className="cursor-pointer rounded-full h-10 w-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.1]" 
-                    onClick={handleImageClick}
-                    title="Generate image"
-                  >
-                    <ImageIcon className="size-4" />
-                  </Button>
-
-                  {/* 3. Settings Icon Button (Utility) - Subtle scale on hover */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="cursor-pointer rounded-full h-10 w-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.1]" 
-                    onClick={handleSettingsClick}
-                    title="Settings"
-                  >
-                    <Settings className="size-4" />
+                    {CLEAR_CHAT_TEXT}
                   </Button>
                 </ChatHeaderBlock>
               </ChatHeader>
@@ -222,11 +191,13 @@ export default function Chat() {
           </div>
         </div>
 
-        {/* === MESSAGE WALL CONTAINER (Scrollable Content Area) === */}
+        {/* === MESSAGE WALL CONTAINER (Scrollable full height content) === */}
+        {/* Padding updated to accommodate fixed header and footer */}
         <div className="h-full overflow-y-auto w-full px-6 py-4 pt-[96px] pb-[136px]"> 
           <div className="flex flex-col items-center justify-end min-h-full">
             {isClient ? (
               <>
+                {/* MessageWall content centered within a max-width container */}
                 <div className="max-w-3xl w-full"> 
                     <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
                 </div>
@@ -244,12 +215,12 @@ export default function Chat() {
           </div>
         </div>
 
-        {/* === FIXED FLOATING INPUT FOOTER (Seamless) === */}
+        {/* === FIXED FLOATING INPUT FOOTER === */}
         <div 
           className="fixed bottom-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 pt-5 px-6 pb-4 shadow-xl transition-all duration-300" 
         >
           <div className="w-full flex justify-center relative">
-            <div className="max-w-3xl w-full"> 
+            <div className="max-w-3xl w-full"> {/* Input container max-width centered */}
               <form id="chat-form" onSubmit={form.handleSubmit(onSubmit)} className="mb-2">
                 <FieldGroup>
                   <Controller
@@ -278,10 +249,10 @@ export default function Chat() {
                             }}
                           />
                           
-                          {/* Send button with hardcoded pink background - Subtle translate on hover */}
+                          {/* Send button with custom color background */}
                           {(status == "ready" || status == "error") && (
                             <Button
-                              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-[#FFD1DC] text-gray-800 transition-all duration-200 hover:translate-y-[-55%]"
+                              className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-[${ACCENT_COLOR_HEX}] text-gray-800 hover:bg-[${ACCENT_COLOR_HEX}]/70 transition-colors`}
                               type="submit"
                               disabled={!field.value.trim()}
                               size="icon"
