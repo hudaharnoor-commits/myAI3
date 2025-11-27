@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useChat } from "@ai-sdk/react";
-// Only importing ArrowUp, Loader2, Plus, and Square
 import { ArrowUp, Loader2, Plus, Square } from "lucide-react"; 
 import { MessageWall } from "@/components/messages/message-wall";
 import { ChatHeader } from "@/app/parts/chat-header";
@@ -30,8 +29,9 @@ import Link from "next/link";
 const STYLIST_NAME = AI_NAME;
 const STYLIST_IMAGE_PATH = "https://files.catbox.moe/hcek6h.png"; 
 
-// Define the required custom color (HARDCODED for Tailwind stability)
-const ACCENT_COLOR_HEX = "#FFD1DC"; 
+// Define the custom colors: PINK for ACCENT/BUBBLE, LIGHT GRAY for UI elements
+const ACCENT_COLOR_PINK = "#FFD1DC"; 
+const NEUTRAL_ACCENT_LIGHT = "#E0E0E0"; // Light gray for neutral buttons/rings
 
 const formSchema = z.object({
   message: z
@@ -145,20 +145,14 @@ export default function Chat() {
     toast.success("Chat cleared");
   }
 
-  // Placeholder functions for the new side buttons (REMOVED as per request)
-  // const handleImageClick = () => { toast.info("Image generation feature coming soon!"); };
-  // const handleSettingsClick = () => { toast.info("Settings panel coming soon!"); };
-
   return (
-    // Outer container for the full-screen pink background
-    // Now the entire page (this div) will scroll if content overflows
-    <div className="min-h-screen w-full flex flex-col items-center font-sans bg-[#FFD1DC] dark:bg-gray-900">
+    // **** 1. MAIN LIGHT GRAY BACKGROUND ****
+    <div className="min-h-screen w-full flex flex-col items-center font-sans bg-gray-200 dark:bg-gray-900">
       
-      {/* 2. MAIN CONTENT AREA (The central white column that contains everything) */}
+      {/* 2. MAIN CONTENT AREA (The central white scrollable column) */}
       <main 
-        // This main area now defines the central white chat window.
-        // It's still `max-w-3xl` but its height will grow with content.
-        className="relative w-full max-w-3xl bg-white dark:bg-gray-800 shadow-xl transition-all duration-300 min-h-screen flex flex-col"
+        // Set main to take full height and use flex column layout
+        className="relative w-full max-w-3xl min-h-screen flex flex-col bg-white dark:bg-gray-800 shadow-xl transition-all duration-300"
       >
         
         {/* === HEADER (Styled & Layered) === */}
@@ -169,42 +163,44 @@ export default function Chat() {
           <ChatHeader>
             <ChatHeaderBlock className="flex items-center gap-3">
               <Avatar
-                // Hardcoded pink ring
-                className="size-12 ring-2 ring-[#FFD1DC] border-2 border-white dark:border-gray-800" 
+                // Neutral gray ring
+                className={`size-12 ring-2 ring-[${NEUTRAL_ACCENT_LIGHT}] border-2 border-white dark:border-gray-800`} 
               >
                 <AvatarImage src={STYLIST_IMAGE_PATH} alt={`${STYLIST_NAME} Avatar`} />
-                {/* Hardcoded pink fallback background */}
-                <AvatarFallback className="bg-[#FFD1DC] text-gray-700 font-bold">A</AvatarFallback>
+                {/* Neutral gray fallback background */}
+                <AvatarFallback className={`bg-[${NEUTRAL_ACCENT_LIGHT}] text-gray-700 font-bold`}>A</AvatarFallback>
               </Avatar>
               <p className="font-semibold text-lg text-foreground">Chat with {STYLIST_NAME}</p> 
             </ChatHeaderBlock>
             <ChatHeaderBlock className="flex justify-end gap-2"> 
               
-              {/* New Chat Button (Pink Accent - Dynamic Hover) */}
+              {/* New Chat Button (Neutral Accent - Dynamic Hover) */}
               <Button
                 variant="outline"
                 size="icon" 
-                className="cursor-pointer rounded-full h-10 w-10 flex items-center justify-center bg-[#FFD1DC] hover:bg-[#FFD1DC]/70 transition-all duration-200 border-[#FFD1DC] text-gray-700 hover:scale-[1.05]" 
+                // Neutral gray background and border
+                className={`cursor-pointer rounded-full h-10 w-10 flex items-center justify-center bg-[${NEUTRAL_ACCENT_LIGHT}] hover:bg-[${NEUTRAL_ACCENT_LIGHT}]/70 transition-all duration-200 border-[${NEUTRAL_ACCENT_LIGHT}] text-gray-700 hover:scale-[1.05]`} 
                 onClick={clearChat}
                 title="Start new chat"
               >
                 <Plus className="size-4" />
               </Button>
-
-              {/* Image Icon Button (REMOVED) */}
-              {/* Settings Icon Button (REMOVED) */}
             </ChatHeaderBlock>
           </ChatHeader>
         </div>
 
-        {/* === MESSAGE WALL CONTAINER (Main content area - NO INTERNAL SCROLLER) === */}
-        {/* This div will now grow in height as content is added, making the entire page scroll. */}
+        {/* 3. SCROLLABLE CONTENT AREA (Flex-1 for scroll) */}
         <div 
-            className="w-full px-6 py-4 flex-1" // Use flex-1 to make it take available space
+            className="w-full px-6 py-4 flex-1 overflow-y-auto" // Added flex-1 and overflow-y-auto back
         > 
           <div className="flex flex-col items-center justify-end w-full min-h-full"> 
             {isClient ? (
               <>
+                {/* *** CRITICAL NOTE ON CHAT BUBBLE COLOR ***
+                  The MESSAGEWALL component (which renders messages) must be updated 
+                  internally to use ACCENT_COLOR_PINK for assistant message backgrounds 
+                  and a light neutral color (like white or gray-50) for user messages.
+                */}
                 <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
                 
                 {status === "submitted" && (
@@ -259,8 +255,8 @@ export default function Chat() {
                           {/* Send button with hardcoded pink background - Dynamic Hover */}
                           {(status == "ready" || status == "error") && (
                             <Button
-                              // Hardcoded pink background
-                              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-[#FFD1DC] text-gray-800 transition-all duration-200 hover:translate-y-[-55%]"
+                              // Hardcoded pink background for the SEND button (accent)
+                              className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-[${ACCENT_COLOR_PINK}] text-gray-800 transition-all duration-200 hover:translate-y-[-55%]`}
                               type="submit"
                               disabled={!field.value.trim()}
                               size="icon"
