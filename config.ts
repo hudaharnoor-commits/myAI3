@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useChat } from "@ai-sdk/react";
-import { ArrowUp, Loader2, Plus, Square } from "lucide-react";
+// Added Image and Settings icons
+import { ArrowUp, Loader2, Plus, Square, Image as ImageIcon, Settings } from "lucide-react"; 
 import { MessageWall } from "@/components/messages/message-wall";
 import { ChatHeader } from "@/app/parts/chat-header";
 import { ChatHeaderBlock } from "@/app/parts/chat-header";
@@ -26,7 +27,7 @@ import Link from "next/link";
 
 // Define the Stylist's Name and Image Path
 const STYLIST_NAME = AI_NAME;
-const STYLIST_IMAGE_PATH = "https://files.catbox.moe/hcek6h.png";
+const STYLIST_IMAGE_PATH = "/stylist-avatar.jpg";
 
 // Define the required custom color (HARDCODED for Tailwind stability)
 const ACCENT_COLOR_HEX = "#FFD1DC"; 
@@ -143,6 +144,17 @@ export default function Chat() {
     toast.success("Chat cleared");
   }
 
+  // Placeholder functions for the new buttons
+  const handleImageClick = () => {
+    toast.info("Image generation feature coming soon!");
+    // Logic for image generation would go here
+  };
+
+  const handleSettingsClick = () => {
+    toast.info("Settings panel coming soon!");
+    // Logic for settings would go here
+  };
+
   return (
     // Outer container for the full-screen background
     <div className="flex h-screen w-full items-center justify-center font-sans bg-gray-100 dark:bg-gray-900">
@@ -156,32 +168,51 @@ export default function Chat() {
         <div 
           className="fixed top-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 py-4 px-6 border-b border-muted shadow-md transition-all duration-300"
         >
-          {/* Content container is max-width centered to prevent header content from stretching too wide */}
+          {/* Content container is max-w-3xl centered to prevent header content from stretching too wide */}
           <div className="flex justify-center w-full"> 
             <div className="max-w-3xl w-full"> 
               <ChatHeader>
                 <ChatHeaderBlock className="flex items-center gap-3">
                   <Avatar
-                    // Hardcoded pink ring
                     className="size-12 ring-2 ring-[#FFD1DC] border-2 border-white dark:border-gray-800" 
                   >
                     <AvatarImage src={STYLIST_IMAGE_PATH} alt={`${STYLIST_NAME} Avatar`} />
-                    {/* Hardcoded pink fallback background */}
                     <AvatarFallback className="bg-[#FFD1DC] text-gray-700 font-bold">A</AvatarFallback>
                   </Avatar>
-                  {/* Removed double asterisks */}
                   <p className="font-semibold text-lg text-foreground">Chat with {STYLIST_NAME}</p> 
                 </ChatHeaderBlock>
-                <ChatHeaderBlock className="flex justify-end">
+                <ChatHeaderBlock className="flex justify-end gap-2"> {/* Added gap-2 for spacing between buttons */}
+                  {/* New Chat Button */}
                   <Button
                     variant="outline"
-                    size="sm"
-                    // Hardcoded pink button background and border
-                    className="cursor-pointer text-sm font-medium rounded-full px-4 py-2 flex items-center gap-1 bg-[#FFD1DC] hover:bg-[#FFD1DC]/70 transition-colors border-[#FFD1DC] text-gray-700" 
+                    size="icon" // Changed to 'icon' for a smaller, rounded button for consistency with new icons
+                    className="cursor-pointer rounded-full h-10 w-10 flex items-center justify-center bg-[#FFD1DC] hover:bg-[#FFD1DC]/70 transition-colors border-[#FFD1DC] text-gray-700" 
                     onClick={clearChat}
+                    title="Start new chat" // Added title for accessibility
                   >
                     <Plus className="size-4" />
-                    {CLEAR_CHAT_TEXT}
+                  </Button>
+
+                  {/* New Image Icon Button */}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="cursor-pointer rounded-full h-10 w-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors border-transparent text-gray-600 dark:text-gray-300" 
+                    onClick={handleImageClick}
+                    title="Generate image"
+                  >
+                    <ImageIcon className="size-4" />
+                  </Button>
+
+                  {/* New Settings Icon Button */}
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="cursor-pointer rounded-full h-10 w-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition-colors border-transparent text-gray-600 dark:text-gray-300" 
+                    onClick={handleSettingsClick}
+                    title="Settings"
+                  >
+                    <Settings className="size-4" />
                   </Button>
                 </ChatHeaderBlock>
               </ChatHeader>
@@ -190,7 +221,6 @@ export default function Chat() {
         </div>
 
         {/* === MESSAGE WALL CONTAINER (Scrollable full height content) === */}
-        {/* Padding updated to accommodate fixed header and footer */}
         <div className="h-full overflow-y-auto w-full px-6 py-4 pt-[96px] pb-[136px]"> 
           <div className="flex flex-col items-center justify-end min-h-full">
             {isClient ? (
@@ -233,7 +263,6 @@ export default function Chat() {
                           <Input
                             {...field}
                             id="chat-form-message"
-                            // Capsule look input
                             className="h-full w-full pr-16 pl-6 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 focus-visible:ring-primary shadow-inner rounded-full transition-all duration-300 placeholder:text-gray-400 text-base" 
                             placeholder="Type your message here..."
                             disabled={status === "streaming"}
