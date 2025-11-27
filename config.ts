@@ -30,10 +30,10 @@ function getDateAndTime(): string {
 
 export const DATE_AND_TIME = getDateAndTime();
 
-export const AI_NAME = "PersonalDesigner";
-export const OWNER_NAME = "Rishi Agrawal";
+export const AI_NAME = "Ava";
+export const OWNER_NAME = "Shriya Kapoor";
 
-export const WELCOME_MESSAGE = `Hi, I’m PersonalDesigner – your AI wardrobe stylist.
+export const WELCOME_MESSAGE = `Hi, I’m Ava: your AI wardrobe stylist.
 
 Tell me: 
 1) What’s the occasion today (business formal, business casual, college, brunch, party, travel, date, etc.)?
