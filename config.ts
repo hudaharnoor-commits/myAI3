@@ -9,25 +9,25 @@ export const MODEL = openai('gpt-4.1');
 // If you want to use a Fireworks model, uncomment the following code and set the FIREWORKS_API_KEY in Vercel
 // NOTE: Use middleware when the reasoning tag is different than think. (Use ChatGPT to help you understand the middleware)
 // export const MODEL = wrapLanguageModel({
-//      model: fireworks('fireworks/deepseek-r1-0528'),
-//      middleware: extractReasoningMiddleware({ tagName: 'think' }), // Use this only when using Deepseek
+//      model: fireworks('fireworks/deepseek-r1-0528'),
+//      middleware: extractReasoningMiddleware({ tagName: 'think' }), // Use this only when using Deepseek
 // });
 
 
 function getDateAndTime(): string {
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('en-US', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-    const timeStr = now.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        timeZoneName: 'short'
-    });
-    return `The day today is ${dateStr} and the time right now is ${timeStr}.`;
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+    const timeStr = now.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZoneName: 'short'
+    });
+    return `The day today is ${dateStr} and the time right now is ${timeStr}.`;
 }
 
 export const DATE_AND_TIME = getDateAndTime();
