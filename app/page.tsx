@@ -20,16 +20,13 @@ import { ChatHeaderBlock } from "@/app/parts/chat-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UIMessage } from "ai";
 import { useEffect, useState, useRef } from "react";
-// Import constants from the config file
 import { AI_NAME, CLEAR_CHAT_TEXT, OWNER_NAME, WELCOME_MESSAGE } from "@/config"; 
 import Image from "next/image";
 import Link from "next/link";
 
-// Define the Stylist's Name and Image Path
 const STYLIST_NAME = AI_NAME;
 const STYLIST_IMAGE_PATH = "https://files.catbox.moe/hcek6h.png"; 
 
-// --- COLOR DEFINITIONS ---
 const AI_MESSAGE_COLOR = "#FFD1DC"; 
 const NEUTRAL_ACCENT = "#D3D3D3";
 
@@ -152,9 +149,9 @@ export default function Chat() {
         className="relative w-full max-w-3xl min-h-screen flex flex-col bg-white dark:bg-gray-800 shadow-xl transition-all duration-300"
       >
         
-        {/* HEADER */}
+        {/* HEADER (no sticky) */}
         <div 
-          className="w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 py-4 px-6 border-b border-muted shadow-md sticky top-0 z-10"
+          className="w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 py-4 px-6 border-b border-muted shadow-md"
         >
           <ChatHeader>
             <ChatHeaderBlock className="flex items-center gap-3">
@@ -179,7 +176,7 @@ export default function Chat() {
           </ChatHeader>
         </div>
 
-        {/* CHAT AREA — PINK + NON-SCROLLABLE */}
+        {/* CHAT AREA — PINK, NO SCROLL CONTAINER */}
         <div 
             className="w-full px-6 py-4 flex-1 bg-pink-50 dark:bg-pink-100"
         > 
@@ -202,9 +199,9 @@ export default function Chat() {
           </div>
         </div>
 
-        {/* INPUT FOOTER */}
+        {/* INPUT FOOTER (no sticky) */}
         <div 
-          className="w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 pt-5 px-6 pb-4 shadow-xl sticky bottom-0 z-10" 
+          className="w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 pt-5 px-6 pb-4 shadow-xl" 
         >
           <div className="w-full flex justify-center relative">
             <div className="w-full"> 
