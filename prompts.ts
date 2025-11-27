@@ -32,6 +32,7 @@ HOW YOU SHOULD WORK
 
    OUTFIT 1 – <short outfit name, e.g. “Clean Campus Formal”>
    OCCASION FIT: <1–2 lines explaining why this works for the user’s occasion>
+   Images of all the selected items.
 
   
    STYLING NOTES:
