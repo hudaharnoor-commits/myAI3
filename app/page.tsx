@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useChat } from "@ai-sdk/react";
-// Restored all dynamic icons from the last fully functional version
-import { ArrowUp, Loader2, Plus, Square, Image as ImageIcon, Settings } from "lucide-react"; 
+// Only importing ArrowUp, Loader2, Plus, and Square
+import { ArrowUp, Loader2, Plus, Square } from "lucide-react"; 
 import { MessageWall } from "@/components/messages/message-wall";
 import { ChatHeader } from "@/app/parts/chat-header";
 import { ChatHeaderBlock } from "@/app/parts/chat-header";
@@ -145,29 +145,26 @@ export default function Chat() {
     toast.success("Chat cleared");
   }
 
-  // Placeholder functions for the new side buttons
-  const handleImageClick = () => {
-    toast.info("Image generation feature coming soon!");
-  };
-
-  const handleSettingsClick = () => {
-    toast.info("Settings panel coming soon!");
-  };
+  // Placeholder functions for the new side buttons (REMOVED as per request)
+  // const handleImageClick = () => { toast.info("Image generation feature coming soon!"); };
+  // const handleSettingsClick = () => { toast.info("Settings panel coming soon!"); };
 
   return (
     // Outer container for the full-screen pink background
-    <div className="flex h-screen w-full items-center justify-center font-sans bg-[#FFD1DC] dark:bg-gray-900">
+    // Now the entire page (this div) will scroll if content overflows
+    <div className="min-h-screen w-full flex flex-col items-center font-sans bg-[#FFD1DC] dark:bg-gray-900">
       
-      {/* 2. MAIN FLEX CONTAINER for Header, Content, Footer */}
+      {/* 2. MAIN CONTENT AREA (The central white column that contains everything) */}
       <main 
-        // Set main to take full height and use flex column layout
-        className="relative w-full max-w-3xl h-full flex flex-col bg-white dark:bg-gray-800 shadow-xl transition-all duration-300"
+        // This main area now defines the central white chat window.
+        // It's still `max-w-3xl` but its height will grow with content.
+        className="relative w-full max-w-3xl bg-white dark:bg-gray-800 shadow-xl transition-all duration-300 min-h-screen flex flex-col"
       >
         
         {/* === HEADER (Styled & Layered) === */}
         <div 
-          // Header styles remain clean and layered
-          className="w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 py-4 px-6 border-b border-muted shadow-md transition-all duration-300"
+          // Header remains sticky at the top of the main window
+          className="w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 py-4 px-6 border-b border-muted shadow-md transition-all duration-300 sticky top-0 z-10"
         >
           <ChatHeader>
             <ChatHeaderBlock className="flex items-center gap-3">
@@ -183,7 +180,7 @@ export default function Chat() {
             </ChatHeaderBlock>
             <ChatHeaderBlock className="flex justify-end gap-2"> 
               
-              {/* 1. New Chat Button (Pink Accent - Dynamic Hover) */}
+              {/* New Chat Button (Pink Accent - Dynamic Hover) */}
               <Button
                 variant="outline"
                 size="icon" 
@@ -194,40 +191,20 @@ export default function Chat() {
                 <Plus className="size-4" />
               </Button>
 
-              {/* 2. Image Icon Button (Utility - Dynamic Hover) */}
-              <Button
-                variant="ghost" 
-                size="icon"
-                className="cursor-pointer rounded-full h-10 w-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.1]" 
-                onClick={handleImageClick}
-                title="Generate image"
-              >
-                <ImageIcon className="size-4" />
-              </Button>
-
-              {/* 3. Settings Icon Button (Utility - Dynamic Hover) */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="cursor-pointer rounded-full h-10 w-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.1]" 
-                onClick={handleSettingsClick}
-                title="Settings"
-              >
-                <Settings className="size-4" />
-              </Button>
+              {/* Image Icon Button (REMOVED) */}
+              {/* Settings Icon Button (REMOVED) */}
             </ChatHeaderBlock>
           </ChatHeader>
         </div>
 
-        {/* 3. SCROLLABLE CONTENT AREA (Takes up remaining space) */}
+        {/* === MESSAGE WALL CONTAINER (Main content area - NO INTERNAL SCROLLER) === */}
+        {/* This div will now grow in height as content is added, making the entire page scroll. */}
         <div 
-            // Use flex-1 to take the height remaining after header/footer
-            className="flex-1 overflow-y-auto w-full px-6 py-4"
+            className="w-full px-6 py-4 flex-1" // Use flex-1 to make it take available space
         > 
-          <div className="flex flex-col items-center justify-end min-h-full w-full"> 
+          <div className="flex flex-col items-center justify-end w-full min-h-full"> 
             {isClient ? (
               <>
-                {/* MessageWall content takes the full width */}
                 <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
                 
                 {status === "submitted" && (
@@ -244,10 +221,10 @@ export default function Chat() {
           </div>
         </div>
 
-        {/* === FIXED FLOATING INPUT FOOTER === */}
+        {/* === INPUT FOOTER === */}
         <div 
-          // Footer styles remain clean and layered
-          className="w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 pt-5 px-6 pb-4 shadow-xl transition-all duration-300" 
+          // Footer remains sticky at the bottom of the main window
+          className="w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 pt-5 px-6 pb-4 shadow-xl transition-all duration-300 sticky bottom-0 z-10" 
         >
           <div className="w-full flex justify-center relative">
             <div className="w-full"> 
