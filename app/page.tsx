@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useChat } from "@ai-sdk/react";
-// Only importing ArrowUp, Loader2, Plus, and Square (Image and Settings are removed)
+// Only importing ArrowUp, Loader2, Plus, and Square
 import { ArrowUp, Loader2, Plus, Square } from "lucide-react"; 
 import { MessageWall } from "@/components/messages/message-wall";
 import { ChatHeader } from "@/app/parts/chat-header";
