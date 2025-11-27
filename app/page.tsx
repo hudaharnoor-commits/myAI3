@@ -164,7 +164,7 @@ export default function Chat() {
                 <AvatarFallback className="bg-pink-100 text-pink-700 font-bold">A</AvatarFallback>
               </Avatar>
               {/* Changed text to Ava's name */}
-              <p className="font-semibold text-lg text-foreground">Chat with **{STYLIST_NAME}**</p> 
+              <p className="font-semibold text-lg text-foreground">Chat with {STYLIST_NAME} </p> 
             </ChatHeaderBlock>
             <ChatHeaderBlock className="flex justify-end">
               <Button
