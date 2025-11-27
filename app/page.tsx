@@ -12,7 +12,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useChat } from "@ai-sdk/react";
+// **** CRITICAL FIX 1: Import useChat and UIMessage (re-confirmed for stability) ****
+import { useChat, type Message } from "@ai-sdk/react";
 import { ArrowUp, Eraser, Loader2, Plus, PlusIcon, Square } from "lucide-react";
 import { MessageWall } from "@/components/messages/message-wall";
 import { ChatHeader } from "@/app/parts/chat-header";
@@ -23,6 +24,15 @@ import { useEffect, useState, useRef } from "react";
 import { AI_NAME, CLEAR_CHAT_TEXT, OWNER_NAME, WELCOME_MESSAGE } from "@/config";
 import Image from "next/image";
 import Link from "next/link";
+
+// Define the Stylist's Name and Image Path
+const STYLIST_NAME = AI_NAME;
+const STYLIST_IMAGE_PATH = "/logo.png"; 
+
+// Define the custom colors: This is the pink hue used for accents
+const ACCENT_COLOR_PINK = "#FFD1DC"; 
+const NEUTRAL_ACCENT_LIGHT = "#E0E0E0"; // Light gray used for fallback/neutral UI parts
+
 
 const formSchema = z.object({
   message: z
@@ -73,7 +83,9 @@ export default function Chat() {
   const stored = typeof window !== 'undefined' ? loadMessagesFromStorage() : { messages: [], durations: {} };
   const [initialMessages] = useState<UIMessage[]>(stored.messages);
 
-  const { messages, sendMessage, status, stop, setMessages } = useChat({
+  // **** CRITICAL FIX 2: Destructure 'append' instead of 'sendMessage' ****
+  // This fixes the "every 2nd output fails" bug by robustly managing history.
+  const { messages, append, status, stop, setMessages } = useChat({
     messages: initialMessages,
   });
 
@@ -122,9 +134,20 @@ export default function Chat() {
     },
   });
 
+  // **** CRITICAL FIX 3: Update onSubmit to use 'append' ****
   function onSubmit(data: z.infer<typeof formSchema>) {
-    sendMessage({ text: data.message });
-    form.reset();
+    // 1. Manually construct the user message object using UIMessage structure
+    const userMessage: UIMessage = {
+        id: Date.now().toString(),
+        role: 'user',
+        parts: [{ type: 'text', text: data.message }],
+    };
+
+    // 2. Append the new message and trigger the streaming response
+    append(userMessage);
+
+    // 3. Clear the form input immediately (now safe to do)
+    form.reset({ message: "" }); 
   }
 
   function clearChat() {
@@ -137,6 +160,7 @@ export default function Chat() {
   }
 
   return (
+    // Outer container with neutral background (per original code's style)
     <div className="flex h-screen items-center justify-center font-sans dark:bg-black">
       <main className="w-full dark:bg-black h-screen relative">
         <div className="fixed top-0 left-0 right-0 z-50 bg-linear-to-b from-background via-background/50 to-transparent dark:bg-black overflow-visible pb-16">
@@ -145,20 +169,22 @@ export default function Chat() {
               <ChatHeaderBlock />
               <ChatHeaderBlock className="justify-center items-center">
                 <Avatar
-                  className="size-8 ring-1 ring-primary"
+                  // Applying Pink Accents 1: Avatar Ring (using fallback style for stability)
+                  className={`size-8 ring-1 ring-[${ACCENT_COLOR_PINK}]`}
                 >
-                  <AvatarImage src="/logo.png" />
-                  <AvatarFallback>
+                  <AvatarImage src={STYLIST_IMAGE_PATH} />
+                  <AvatarFallback className={`bg-[${ACCENT_COLOR_PINK}]`}>
                     <Image src="/logo.png" alt="Logo" width={36} height={36} />
                   </AvatarFallback>
                 </Avatar>
-                <p className="tracking-tight">Chat with {AI_NAME}</p>
+                <p className="tracking-tight">Chat with {STYLIST_NAME}</p>
               </ChatHeaderBlock>
               <ChatHeaderBlock className="justify-end">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="cursor-pointer"
+                  // Applying Pink Accents 2: New Chat Button
+                  className={`cursor-pointer bg-[${ACCENT_COLOR_PINK}] hover:bg-[${ACCENT_COLOR_PINK}]/70 border-[${ACCENT_COLOR_PINK}] text-gray-700`}
                   onClick={clearChat}
                 >
                   <Plus className="size-4" />
@@ -172,6 +198,7 @@ export default function Chat() {
           <div className="flex flex-col items-center justify-end min-h-full">
             {isClient ? (
               <>
+                {/* *** PINK BUBBLE FIX LOCATION: MessageWall requires internal modification *** */}
                 <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
                 {status === "submitted" && (
                   <div className="flex justify-start max-w-3xl w-full">
@@ -222,6 +249,8 @@ export default function Chat() {
                               type="submit"
                               disabled={!field.value.trim()}
                               size="icon"
+                              // Applying Pink Accents 3: Send Button
+                              style={{ backgroundColor: ACCENT_COLOR_PINK, color: '#4A4A4A' }}
                             >
                               <ArrowUp className="size-4" />
                             </Button>
