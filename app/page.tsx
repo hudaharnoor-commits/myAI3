@@ -27,7 +27,7 @@ import Link from "next/link";
 
 // Define the Stylist's Name and Image Path
 const STYLIST_NAME = "Ava, your Stylist";
-const STYLIST_IMAGE_PATH = "/stylist-avatar.jpg"; // <-- *** You need to place the stylist image here ***
+const STYLIST_IMAGE_PATH = "https://files.catbox.moe/hcek6h.png"; // <-- *** You need to place the stylist image here ***
 
 const formSchema = z.object({
   message: z
