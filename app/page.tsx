@@ -29,9 +29,10 @@ import Link from "next/link";
 const STYLIST_NAME = AI_NAME;
 const STYLIST_IMAGE_PATH = "https://files.catbox.moe/hcek6h.png"; 
 
-// Define the custom colors: This is the pink hue used for accents
-const ACCENT_COLOR_PINK = "#FFD1DC"; 
-const NEUTRAL_ACCENT_LIGHT = "#E0E0E0"; // Light gray used for fallback/neutral UI parts
+// --- COLOR DEFINITIONS ---
+// This is the color you MUST use in your MessageBubble component for the assistant.
+const AI_MESSAGE_COLOR = "#FFD1DC"; 
+const NEUTRAL_ACCENT = "#D3D3D3"; // Neutral gray for buttons/fallback
 
 const formSchema = z.object({
   message: z
@@ -146,10 +147,10 @@ export default function Chat() {
   }
 
   return (
-    // Outer container for the full-screen neutral background
+    // Outer container: Neutral Gray Background
     <div className="min-h-screen w-full flex flex-col items-center font-sans bg-gray-200 dark:bg-gray-900">
       
-      {/* 2. MAIN CONTENT AREA (The central white scrollable column) */}
+      {/* Main Content Area: White Central Column */}
       <main 
         className="relative w-full max-w-3xl min-h-screen flex flex-col bg-white dark:bg-gray-800 shadow-xl transition-all duration-300"
       >
@@ -162,22 +163,22 @@ export default function Chat() {
             <ChatHeaderBlock className="flex items-center gap-3">
               <Avatar
                 // Neutral gray ring
-                className={`size-12 ring-2 ring-[${NEUTRAL_ACCENT_LIGHT}] border-2 border-white dark:border-gray-800`} 
+                className={`size-12 ring-2 ring-[${NEUTRAL_ACCENT}] border-2 border-white dark:border-gray-800`} 
               >
                 <AvatarImage src={STYLIST_IMAGE_PATH} alt={`${STYLIST_NAME} Avatar`} />
-                {/* Pink fallback background */}
-                <AvatarFallback className={`bg-[${ACCENT_COLOR_PINK}] text-gray-700 font-bold`}>A</AvatarFallback>
+                {/* Neutral gray fallback background */}
+                <AvatarFallback className={`bg-[${NEUTRAL_ACCENT}] text-gray-700 font-bold`}>A</AvatarFallback>
               </Avatar>
               <p className="font-semibold text-lg text-foreground">Chat with {STYLIST_NAME}</p> 
             </ChatHeaderBlock>
             <ChatHeaderBlock className="flex justify-end gap-2"> 
               
-              {/* 1. New Chat Button (PINK Accent - Dynamic Hover) */}
+              {/* New Chat Button (Neutral Accent) */}
               <Button
                 variant="outline"
                 size="icon" 
-                // Hardcoded PINK background for ACCENT
-                className={`cursor-pointer rounded-full h-10 w-10 flex items-center justify-center bg-[${ACCENT_COLOR_PINK}] hover:bg-[${ACCENT_COLOR_PINK}]/70 transition-all duration-200 border-[${ACCENT_COLOR_PINK}] text-gray-700 hover:scale-[1.05]`} 
+                // Neutral gray background
+                className={`cursor-pointer rounded-full h-10 w-10 flex items-center justify-center bg-[${NEUTRAL_ACCENT}] hover:bg-[${NEUTRAL_ACCENT}]/70 transition-all duration-200 border-[${NEUTRAL_ACCENT}] text-gray-700 hover:scale-[1.05]`} 
                 onClick={clearChat}
                 title="Start new chat"
               >
@@ -194,7 +195,10 @@ export default function Chat() {
           <div className="flex flex-col items-center justify-end w-full min-h-full"> 
             {isClient ? (
               <>
-                {/* *** PINK BUBBLE FIX LOCATION *** */}
+                {/* * * * ACTION REQUIRED FOR PINK BUBBLES * * *
+                  You must modify your MessageBubble component to use the AI_MESSAGE_COLOR 
+                  constant for assistant messages: style={{ backgroundColor: '#FFD1DC' }} 
+                */}
                 <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
                 
                 {status === "submitted" && (
@@ -213,7 +217,6 @@ export default function Chat() {
 
         {/* === INPUT FOOTER === */}
         <div 
-          // Footer remains sticky at the bottom of the main window
           className="w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 pt-5 px-6 pb-4 shadow-xl transition-all duration-300 sticky bottom-0 z-10" 
         >
           <div className="w-full flex justify-center relative">
@@ -246,11 +249,11 @@ export default function Chat() {
                             }}
                           />
                           
-                          {/* Send button (PINK Accent) - Dynamic Hover */}
+                          {/* Send button (PINK Accent - Visible Pink Accent 1) */}
                           {(status == "ready" || status == "error") && (
                             <Button
                               // Hardcoded PINK background for ACCENT
-                              className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-[${ACCENT_COLOR_PINK}] text-gray-800 transition-all duration-200 hover:translate-y-[-55%]`}
+                              className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-[${AI_MESSAGE_COLOR}] text-gray-800 transition-all duration-200 hover:translate-y-[-55%]`}
                               type="submit"
                               disabled={!field.value.trim()}
                               size="icon"
