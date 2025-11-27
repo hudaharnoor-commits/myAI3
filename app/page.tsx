@@ -12,14 +12,15 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-// **** CRITICAL CHANGE 1: Import 'append' instead of 'sendMessage' ****
-import { useChat, type Message } from "@ai-sdk/react";
+// **** CRITICAL CHANGE 1: REMOVED INCORRECT TYPE IMPORT ****
+import { useChat } from "@ai-sdk/react";
 import { ArrowUp, Loader2, Plus, Square } from "lucide-react"; 
 import { MessageWall } from "@/components/messages/message-wall";
 import { ChatHeader } from "@/app/parts/chat-header";
 import { ChatHeaderBlock } from "@/app/parts/chat-header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { UIMessage } from "ai";
+// NOTE: UIMessage is already correctly imported from 'ai'
+import { UIMessage } from "ai"; 
 import { useEffect, useState, useRef } from "react";
 // Import constants from the config file
 import { AI_NAME, CLEAR_CHAT_TEXT, OWNER_NAME, WELCOME_MESSAGE } from "@/config"; 
@@ -135,14 +136,15 @@ export default function Chat() {
 
   // **** CRITICAL CHANGE 3: Update onSubmit to use 'append' ****
   function onSubmit(data: z.infer<typeof formSchema>) {
-    // 1. Manually construct the user message object
-    const userMessage: Message = {
+    // 1. Manually construct the user message object using UIMessage structure
+    const userMessage: UIMessage = {
         id: Date.now().toString(),
         role: 'user',
-        content: data.message,
+        parts: [{ type: 'text', text: data.message }],
     };
 
-    // 2. Append the new message and trigger the streaming response
+    // 2. Append the new message and trigger the streaming response (This fixes the 2nd prompt failure)
+    // NOTE: 'append' correctly takes UIMessage type structure from 'ai' package.
     append(userMessage);
 
     // 3. Clear the form input immediately (now safe to do)
@@ -185,7 +187,7 @@ export default function Chat() {
             </ChatHeaderBlock>
             <ChatHeaderBlock className="flex justify-end gap-2"> 
               
-              {/* 1. New Chat Button (Pink Accent - Visible Pink Accent) */}
+              {/* 1. New Chat Button (Pink Accent - Visible Pink Accent 1) */}
               <Button
                 variant="outline"
                 size="icon" 
@@ -249,7 +251,6 @@ export default function Chat() {
                             disabled={status === "streaming"}
                             aria-invalid={fieldState.invalid}
                             autoComplete="off"
-                            // Ensure Enter key submission also calls the fixed onSubmit
                             onKeyDown={(e) => {
                               if (e.key === "Enter" && !e.shiftKey) {
                                 e.preventDefault();
@@ -258,7 +259,7 @@ export default function Chat() {
                             }}
                           />
                           
-                          {/* Send button (Pink Accent) */}
+                          {/* Send button (Pink Accent - Visible Pink Accent 3) */}
                           {(status == "ready" || status == "error") && (
                             <Button
                               // Hardcoded PINK background for ACCENT
