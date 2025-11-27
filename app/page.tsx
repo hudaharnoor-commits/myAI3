@@ -5,7 +5,6 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
-// Components from your original code
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -152,10 +151,11 @@ export default function Chat() {
         <div 
           className="absolute top-0 left-0 right-0 z-10 bg-white dark:bg-gray-800 py-4 px-6 border-b border-muted transition-all duration-300"
         >
+          {/* This is the line that caused the error. It's fixed by ensuring ChatHeader accepts className. */}
           <ChatHeader className="flex items-center justify-between">
             <ChatHeaderBlock className="flex items-center gap-3">
               <Avatar
-                className="size-12 ring-2 ring-primary/50 border-2 border-white dark:border-gray-800" // Ring for the soft accent color
+                className="size-12 ring-2 ring-primary/50 border-2 border-white dark:border-gray-800"
               >
                 <AvatarImage src="/logo.png" />
                 <AvatarFallback className="bg-muted text-foreground">AI</AvatarFallback>
@@ -164,9 +164,9 @@ export default function Chat() {
             </ChatHeaderBlock>
             <ChatHeaderBlock className="flex justify-end">
               <Button
-                variant="outline" // Use standard outline or secondary variant
+                variant="outline"
                 size="sm"
-                className="cursor-pointer text-sm font-medium rounded-full px-4 py-2 flex items-center gap-1 bg-primary/10 hover:bg-primary/20 transition-colors" // Simulates the soft accent color
+                className="cursor-pointer text-sm font-medium rounded-full px-4 py-2 flex items-center gap-1 bg-primary/10 hover:bg-primary/20 transition-colors"
                 onClick={clearChat}
               >
                 <Plus className="size-4 text-primary" />
@@ -177,7 +177,6 @@ export default function Chat() {
         </div>
 
         {/* === MESSAGE WALL CONTAINER === */}
-        {/* Padding adjusted to ensure no overlap with header/footer */}
         <div className="h-full overflow-y-auto px-6 py-4 pt-[96px] pb-[136px]"> 
           <div className="flex flex-col items-center justify-end min-h-full">
             {isClient ? (
@@ -217,7 +216,6 @@ export default function Chat() {
                           <Input
                             {...field}
                             id="chat-form-message"
-                            // Extreme rounding for the capsule look
                             className="h-full w-full pr-16 pl-6 bg-gray-50 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600 focus-visible:ring-primary shadow-inner rounded-full transition-all duration-300 placeholder:text-gray-400 text-base" 
                             placeholder="Type your message here..."
                             disabled={status === "streaming"}
@@ -231,10 +229,10 @@ export default function Chat() {
                             }}
                           />
                           
-                          {/* Send button (right-aligned and rounded-full) */}
+                          {/* Send button */}
                           {(status == "ready" || status == "error") && (
                             <Button
-                              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-primary/20 hover:bg-primary/30 text-primary transition-colors" // Soft background, primary color icon
+                              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-primary/20 hover:bg-primary/30 text-primary transition-colors"
                               type="submit"
                               disabled={!field.value.trim()}
                               size="icon"
@@ -243,7 +241,7 @@ export default function Chat() {
                             </Button>
                           )}
                           
-                          {/* Stop button (right-aligned and rounded-full) */}
+                          {/* Stop button */}
                           {(status == "streaming" || status == "submitted") && (
                             <Button
                               className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 bg-destructive hover:bg-destructive/90 shadow-md"
