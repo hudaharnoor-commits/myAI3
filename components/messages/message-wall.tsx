@@ -22,26 +22,23 @@ export function MessageWall({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Scroll whenever visible messages change
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
-  // 🔎 Filter out tool/system noise like "Used tool"
+  // Filter out system/tool noise like “Used tool”
   const visibleMessages = messages.filter((m) => {
-    // Combine all text parts (if any)
     const text = (m.parts || [])
       .map((p: any) => (p?.text ?? "").toString())
       .join(" ")
       .trim();
 
-    // Hide pure tool log lines
+    // Filter log lines
     if (text === "Used tool" || text === "tool used") return false;
 
-    // Hide tool/system roles entirely
-    if (m.role === "tool" || m.role === "system") return false;
+    // SYSTEM messages are hidden
+    if (m.role === "system") return false;
 
-    // Keep user + assistant messages
     return true;
   });
 
@@ -66,7 +63,6 @@ export function MessageWall({
             </div>
           );
         })}
-
         <div ref={messagesEndRef} />
       </div>
     </div>
