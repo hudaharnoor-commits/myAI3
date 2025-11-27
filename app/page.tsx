@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useChat } from "@ai-sdk/react";
-// Only importing ArrowUp, Loader2, Plus, and Square
 import { ArrowUp, Loader2, Plus, Square } from "lucide-react"; 
 import { MessageWall } from "@/components/messages/message-wall";
 import { ChatHeader } from "@/app/parts/chat-header";
@@ -168,8 +167,8 @@ export default function Chat() {
                 className={`size-12 ring-2 ring-[${NEUTRAL_ACCENT_LIGHT}] border-2 border-white dark:border-gray-800`} 
               >
                 <AvatarImage src={STYLIST_IMAGE_PATH} alt={`${STYLIST_NAME} Avatar`} />
-                {/* Neutral gray fallback background */}
-                <AvatarFallback className={`bg-[${NEUTRAL_ACCENT_LIGHT}] text-gray-700 font-bold`}>A</AvatarFallback>
+                {/* Pink fallback background */}
+                <AvatarFallback className={`bg-[${ACCENT_COLOR_PINK}] text-gray-700 font-bold`}>A</AvatarFallback>
               </Avatar>
               <p className="font-semibold text-lg text-foreground">Chat with {STYLIST_NAME}</p> 
             </ChatHeaderBlock>
@@ -198,7 +197,7 @@ export default function Chat() {
           <div className="flex flex-col items-center justify-end w-full min-h-full"> 
             {isClient ? (
               <>
-                {/* *** CRITICAL NOTE: The assistant bubbles (MessageWall) should use the PINK color internally *** */}
+                {/* *** ACTION REQUIRED: Your message component must use ACCENT_COLOR_PINK for assistant bubbles *** */}
                 <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
                 
                 {status === "submitted" && (
