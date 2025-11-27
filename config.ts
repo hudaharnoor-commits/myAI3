@@ -11,6 +11,20 @@ export const MODEL = openai('gpt-4.1');
 //     middleware: extractReasoningMiddleware({ tagName: 'think' }), // Use this only when using Deepseek
 // });
 
+export const AI_NAME = "PersonalDesigner";
+
+export const OWNER_NAME = "Rishika Agrawal";
+
+export const WELCOME_MESSAGE = `
+Hi, I’m PersonalDesigner – your AI wardrobe stylist.
+
+Tell me: 
+1) What’s the occasion today (business formal, business casual, college, brunch, party, travel, date, etc.)?
+2) Where are you going (office, campus, mall, restaurant, club, airport, etc.)?
+3) Any pieces you want to wear or avoid?
+
+I’ll build 1–3 outfits using ONLY clothes from your own closet and share the image links for each item.
+`;
 
 function getDateAndTime(): string {
     const now = new Date();
