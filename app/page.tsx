@@ -145,35 +145,36 @@ export default function Chat() {
   }
 
   return (
+    // Use a very light, neutral background for a luxurious feel
     <div className="flex h-screen items-center justify-center font-sans bg-gray-50 dark:bg-gray-950">
       <main className="w-full h-screen relative bg-gray-50 dark:bg-gray-950">
         
-        {/* === ELEGANT HEADER === */}
+        {/* === ELEGANT HEADER (Floating/Blurred) === */}
         <div 
-          className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg dark:bg-gray-900/80 shadow-lg border-b border-gray-200 dark:border-gray-800 transition-all duration-300"
+          className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md dark:bg-gray-900/90 shadow-lg border-b border-gray-100 dark:border-gray-800 transition-all duration-300"
         >
-          <div className="relative py-3"> {/* Added vertical padding */}
+          <div className="relative py-4"> {/* Increased vertical padding */}
             <ChatHeader>
               <ChatHeaderBlock />
-              <ChatHeaderBlock className="justify-center items-center gap-3"> {/* Increased gap for style */}
+              <ChatHeaderBlock className="justify-center items-center gap-3">
                 <Avatar
-                  className="size-11 ring-2 ring-primary border-4 border-white dark:border-gray-900 shadow-md" // Larger, prominent avatar with shadow
+                  className="size-11 ring-2 ring-primary border-4 border-white dark:border-gray-900 shadow-md" // Prominent avatar
                 >
                   <AvatarImage src="/logo.png" />
                   <AvatarFallback>
                     <Image src="/logo.png" alt="Logo" width={44} height={44} />
                   </AvatarFallback>
                 </Avatar>
-                <p className="tracking-tight font-extrabold text-xl text-gray-800 dark:text-white">Chat with **{AI_NAME}**</p>
+                <p className="tracking-tight font-semibold text-xl text-gray-800 dark:text-white">Chat with **{AI_NAME}**</p>
               </ChatHeaderBlock>
               <ChatHeaderBlock className="justify-end">
                 <Button
-                  variant="outline" // Using outline for a sophisticated, high-contrast button
+                  variant="ghost" // Use ghost for a cleaner look, minimal styling
                   size="sm"
-                  className="cursor-pointer text-sm font-medium hover:bg-primary/10 transition-colors duration-200 rounded-full border-2" 
+                  className="cursor-pointer text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 rounded-full" 
                   onClick={clearChat}
                 >
-                  <Plus className="size-4 mr-1" />
+                  <Plus className="size-4 mr-1 text-primary" />
                   **New Chat**
                 </Button>
               </ChatHeaderBlock>
@@ -182,14 +183,14 @@ export default function Chat() {
         </div>
 
         {/* === MESSAGE WALL CONTAINER === */}
-        {/* Increased padding to accommodate the larger header and footer */}
-        <div className="h-screen overflow-y-auto px-5 w-full pt-[110px] pb-[160px]"> 
+        {/* Generous padding for content visibility */}
+        <div className="h-screen overflow-y-auto px-5 w-full pt-[110px] pb-[170px]"> 
           <div className="flex flex-col items-center justify-end min-h-full">
             {isClient ? (
               <>
                 <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
                 {status === "submitted" && (
-                  // Loading indicator aligned with message wall content
+                  // Loading indicator
                   <div className="flex justify-start max-w-3xl w-full pt-4"> 
                     <Loader2 className="size-5 animate-spin text-primary" />
                   </div>
@@ -203,11 +204,11 @@ export default function Chat() {
           </div>
         </div>
 
-        {/* === SLEEK INPUT FOOTER === */}
+        {/* === SLEEK FLOATING INPUT FOOTER === */}
         <div 
-          className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg dark:bg-gray-900/80 shadow-[0_-10px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_-10px_30px_rgba(255,255,255,0.05)] border-t border-gray-200 dark:border-gray-800" 
+          className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md dark:bg-gray-900/90 shadow-2xl pt-6 pb-2" 
         >
-          <div className="w-full px-5 pt-6 pb-2 items-center flex justify-center relative">
+          <div className="w-full px-5 items-center flex justify-center relative">
             <div className="max-w-3xl w-full">
               <form id="chat-form" onSubmit={form.handleSubmit(onSubmit)} className="mb-4">
                 <FieldGroup>
@@ -223,8 +224,8 @@ export default function Chat() {
                           <Input
                             {...field}
                             id="chat-form-message"
-                            // Highly rounded, large input field for premium look
-                            className="h-16 pr-20 pl-6 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 focus-visible:ring-primary shadow-xl rounded-2xl transition-all duration-300 placeholder:text-gray-500 text-lg" 
+                            // Very heavy rounded corners (rounded-[30px]) for the capsule look
+                            className="h-16 pr-20 pl-6 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 focus-visible:ring-primary shadow-lg rounded-[30px] transition-all duration-300 placeholder:text-gray-400 text-lg" 
                             placeholder="Ask me for style advice, color palettes, or outfit ideas..."
                             disabled={status === "streaming"}
                             aria-invalid={fieldState.invalid}
@@ -239,7 +240,7 @@ export default function Chat() {
                           {/* Send button styling */}
                           {(status == "ready" || status == "error") && (
                             <Button
-                              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 transition-all duration-300 shadow-md"
+                              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md"
                               type="submit"
                               disabled={!field.value.trim()}
                               size="icon"
@@ -250,7 +251,7 @@ export default function Chat() {
                           {/* Stop button styling */}
                           {(status == "streaming" || status == "submitted") && (
                             <Button
-                              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 bg-destructive hover:bg-destructive/90 transition-all duration-300 shadow-md"
+                              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 bg-destructive hover:bg-destructive/90 shadow-md"
                               size="icon"
                               onClick={() => {
                                 stop();
@@ -268,7 +269,7 @@ export default function Chat() {
             </div>
           </div>
           
-          {/* === PROFESSIONAL FOOTER LINKS === */}
+          {/* === FOOTER LINKS === */}
           <div className="w-full px-5 py-3 items-center flex justify-center text-xs text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-gray-800">
             <p className="text-center font-medium">
               © {new Date().getFullYear()} {OWNER_NAME}&nbsp;·&nbsp;
