@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useChat } from "@ai-sdk/react";
+// Only importing ArrowUp, Loader2, Plus, and Square
 import { ArrowUp, Loader2, Plus, Square } from "lucide-react"; 
 import { MessageWall } from "@/components/messages/message-wall";
 import { ChatHeader } from "@/app/parts/chat-header";
@@ -29,9 +30,9 @@ import Link from "next/link";
 const STYLIST_NAME = AI_NAME;
 const STYLIST_IMAGE_PATH = "https://files.catbox.moe/hcek6h.png"; 
 
-// Define the custom colors: PINK for ACCENT/BUBBLE, LIGHT GRAY for UI elements
+// Define the custom colors: This is the pink hue used for accents
 const ACCENT_COLOR_PINK = "#FFD1DC"; 
-const NEUTRAL_ACCENT_LIGHT = "#E0E0E0"; // Light gray for neutral buttons/rings
+const NEUTRAL_ACCENT_LIGHT = "#E0E0E0"; // Light gray used for fallback/neutral UI parts
 
 const formSchema = z.object({
   message: z
@@ -146,7 +147,7 @@ export default function Chat() {
   }
 
   return (
-    // **** 1. MAIN LIGHT GRAY BACKGROUND ****
+    // Outer container for the full-screen neutral background
     <div className="min-h-screen w-full flex flex-col items-center font-sans bg-gray-200 dark:bg-gray-900">
       
       {/* 2. MAIN CONTENT AREA (The central white scrollable column) */}
@@ -174,12 +175,12 @@ export default function Chat() {
             </ChatHeaderBlock>
             <ChatHeaderBlock className="flex justify-end gap-2"> 
               
-              {/* New Chat Button (Neutral Accent - Dynamic Hover) */}
+              {/* 1. New Chat Button (Pink Accent - Dynamic Hover) */}
               <Button
                 variant="outline"
                 size="icon" 
-                // Neutral gray background and border
-                className={`cursor-pointer rounded-full h-10 w-10 flex items-center justify-center bg-[${NEUTRAL_ACCENT_LIGHT}] hover:bg-[${NEUTRAL_ACCENT_LIGHT}]/70 transition-all duration-200 border-[${NEUTRAL_ACCENT_LIGHT}] text-gray-700 hover:scale-[1.05]`} 
+                // Hardcoded PINK background for ACCENT
+                className={`cursor-pointer rounded-full h-10 w-10 flex items-center justify-center bg-[${ACCENT_COLOR_PINK}] hover:bg-[${ACCENT_COLOR_PINK}]/70 transition-all duration-200 border-[${ACCENT_COLOR_PINK}] text-gray-700 hover:scale-[1.05]`} 
                 onClick={clearChat}
                 title="Start new chat"
               >
@@ -191,16 +192,13 @@ export default function Chat() {
 
         {/* 3. SCROLLABLE CONTENT AREA (Flex-1 for scroll) */}
         <div 
-            className="w-full px-6 py-4 flex-1 overflow-y-auto" // Added flex-1 and overflow-y-auto back
+            // Uses flex-1 to occupy remaining vertical space and allows scrolling
+            className="w-full px-6 py-4 flex-1 overflow-y-auto"
         > 
           <div className="flex flex-col items-center justify-end w-full min-h-full"> 
             {isClient ? (
               <>
-                {/* *** CRITICAL NOTE ON CHAT BUBBLE COLOR ***
-                  The MESSAGEWALL component (which renders messages) must be updated 
-                  internally to use ACCENT_COLOR_PINK for assistant message backgrounds 
-                  and a light neutral color (like white or gray-50) for user messages.
-                */}
+                {/* *** CRITICAL NOTE: The assistant bubbles (MessageWall) should use the PINK color internally *** */}
                 <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
                 
                 {status === "submitted" && (
@@ -255,7 +253,7 @@ export default function Chat() {
                           {/* Send button with hardcoded pink background - Dynamic Hover */}
                           {(status == "ready" || status == "error") && (
                             <Button
-                              // Hardcoded pink background for the SEND button (accent)
+                              // Hardcoded pink background for ACCENT
                               className={`absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 shadow-md bg-[${ACCENT_COLOR_PINK}] text-gray-800 transition-all duration-200 hover:translate-y-[-55%]`}
                               type="submit"
                               disabled={!field.value.trim()}
