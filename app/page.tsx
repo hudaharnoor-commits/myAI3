@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useChat } from "@ai-sdk/react";
-// Only importing ArrowUp, Loader2, Plus, and Square
-import { ArrowUp, Loader2, Plus, Square } from "lucide-react"; 
+// Import all necessary icons
+import { ArrowUp, Loader2, Plus, Square, Image as ImageIcon, Settings } from "lucide-react"; 
 import { MessageWall } from "@/components/messages/message-wall";
 import { ChatHeader } from "@/app/parts/chat-header";
 import { ChatHeaderBlock } from "@/app/parts/chat-header";
@@ -28,7 +28,7 @@ import Link from "next/link";
 
 // Define the Stylist's Name and Image Path
 const STYLIST_NAME = AI_NAME;
-const STYLIST_IMAGE_PATH = "https://files.catbox.moe/hcek6h.png"; 
+const STYLIST_IMAGE_PATH = "https://files.catbox.moe/hcek6h.png";
 
 // Define the required custom color (HARDCODED for Tailwind stability)
 const ACCENT_COLOR_HEX = "#FFD1DC"; 
@@ -145,62 +145,95 @@ export default function Chat() {
     toast.success("Chat cleared");
   }
 
+  // Placeholder functions for the new side buttons
+  const handleImageClick = () => {
+    toast.info("Image generation feature coming soon!");
+  };
+
+  const handleSettingsClick = () => {
+    toast.info("Settings panel coming soon!");
+  };
+
   return (
-    // Outer container for the full-screen pink background
+    // **** 1. MAIN PINK BACKGROUND ****
     <div className="flex h-screen w-full items-center justify-center font-sans bg-[#FFD1DC] dark:bg-gray-900">
       
-      {/* === MAIN CONTENT AREA (The scrollable white column) === */}
+      {/* === MAIN CONTENT AREA === */}
       <main 
-        // Changed to have fixed width/height but uses a white background for the central chat window look
-        className="relative w-full max-w-3xl h-full bg-white dark:bg-gray-800 shadow-xl transition-all duration-300"
+        // This main area is now transparent/white over the pink background
+        className="relative w-full h-full bg-white/0 dark:bg-gray-800/0 transition-all duration-300"
       >
         
-        {/* === FIXED HEADER (Professional & Styled) === */}
+        {/* === FIXED HEADER (Styled & Layered) === */}
         <div 
-          // Header uses a white background with blur for a clean look
-          className="fixed top-0 left-0 right-0 z-10 mx-auto max-w-3xl w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 py-4 px-6 border-b border-muted shadow-md transition-all duration-300"
+          // Uses transparency and blur for a seamless, floating effect over the pink background
+          className="fixed top-0 left-0 right-0 z-10 bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 py-4 px-6 border-b border-white shadow-md transition-all duration-300"
         >
-          <ChatHeader>
-            <ChatHeaderBlock className="flex items-center gap-3">
-              <Avatar
-                // Hardcoded pink ring
-                className="size-12 ring-2 ring-[#FFD1DC] border-2 border-white dark:border-gray-800" 
-              >
-                <AvatarImage src={STYLIST_IMAGE_PATH} alt={`${STYLIST_NAME} Avatar`} />
-                {/* Hardcoded pink fallback background */}
-                <AvatarFallback className="bg-[#FFD1DC] text-gray-700 font-bold">A</AvatarFallback>
-              </Avatar>
-              <p className="font-semibold text-lg text-foreground">Chat with {STYLIST_NAME}</p> 
-            </ChatHeaderBlock>
-            <ChatHeaderBlock className="flex justify-end gap-2"> 
-              
-              {/* New Chat Button (Pink Accent - Dynamic Hover) */}
-              <Button
-                variant="outline"
-                size="sm" 
-                className="cursor-pointer rounded-full px-4 py-2 flex items-center gap-1 bg-[#FFD1DC] hover:bg-[#FFD1DC]/70 transition-all duration-200 border-[#FFD1DC] text-gray-700 hover:scale-[1.05]" 
-                onClick={clearChat}
-                title="Start new chat"
-              >
-                <Plus className="size-4" />
-                {CLEAR_CHAT_TEXT}
-              </Button>
-            </ChatHeaderBlock>
-          </ChatHeader>
+          <div className="flex justify-center w-full"> 
+            <div className="max-w-3xl w-full"> 
+              <ChatHeader>
+                <ChatHeaderBlock className="flex items-center gap-3">
+                  <Avatar
+                    // Hardcoded pink ring
+                    className="size-12 ring-2 ring-[#FFD1DC] border-2 border-white dark:border-gray-800" 
+                  >
+                    <AvatarImage src={STYLIST_IMAGE_PATH} alt={`${STYLIST_NAME} Avatar`} />
+                    {/* Hardcoded pink fallback background */}
+                    <AvatarFallback className="bg-[#FFD1DC] text-gray-700 font-bold">A</AvatarFallback>
+                  </Avatar>
+                  <p className="font-semibold text-lg text-foreground">Chat with {STYLIST_NAME}</p> 
+                </ChatHeaderBlock>
+                <ChatHeaderBlock className="flex justify-end gap-2"> 
+                  
+                  {/* 1. New Chat Button (Pink Accent - Dynamic Hover) */}
+                  <Button
+                    variant="outline"
+                    size="icon" 
+                    className="cursor-pointer rounded-full h-10 w-10 flex items-center justify-center bg-[#FFD1DC] hover:bg-[#FFD1DC]/70 transition-all duration-200 border-[#FFD1DC] text-gray-700 hover:scale-[1.05]" 
+                    onClick={clearChat}
+                    title="Start new chat"
+                  >
+                    <Plus className="size-4" />
+                  </Button>
+
+                  {/* 2. Image Icon Button (Utility - Dynamic Hover) */}
+                  <Button
+                    variant="ghost" 
+                    size="icon"
+                    className="cursor-pointer rounded-full h-10 w-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.1]" 
+                    onClick={handleImageClick}
+                    title="Generate image"
+                  >
+                    <ImageIcon className="size-4" />
+                  </Button>
+
+                  {/* 3. Settings Icon Button (Utility - Dynamic Hover) */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="cursor-pointer rounded-full h-10 w-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 transition-all duration-200 hover:scale-[1.1]" 
+                    onClick={handleSettingsClick}
+                    title="Settings"
+                  >
+                    <Settings className="size-4" />
+                  </Button>
+                </ChatHeaderBlock>
+              </ChatHeader>
+            </div>
+          </div>
         </div>
 
         {/* === MESSAGE WALL CONTAINER (Scrollable Content Area) === */}
-        {/* Note: Scrolling is now handled by this 'main' component's overflow, 
-           but since 'main' has h-full, we adjust the inner padding and let content scroll. */}
+        {/* Padding updated to accommodate fixed header and footer */}
         <div className="h-full overflow-y-auto w-full px-6 py-4 pt-[96px] pb-[136px]"> 
-          <div className="flex flex-col items-center justify-end min-h-full w-full"> 
+          <div className="flex flex-col items-center justify-end min-h-full">
             {isClient ? (
               <>
-                {/* MessageWall content takes the full width of the centered main container */}
-                <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
-                
+                <div className="max-w-3xl w-full"> 
+                    <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
+                </div>
                 {status === "submitted" && (
-                  <div className="flex justify-start w-full pt-4"> 
+                  <div className="flex justify-start max-w-3xl w-full pt-4"> 
                     <Loader2 className="size-5 animate-spin text-primary" />
                   </div>
                 )}
@@ -213,13 +246,13 @@ export default function Chat() {
           </div>
         </div>
 
-        {/* === FIXED FLOATING INPUT FOOTER (Seamless) === */}
+        {/* === FIXED FLOATING INPUT FOOTER (Styled & Layered) === */}
         <div 
-          // Footer is fixed to the bottom of the visible chat window (main)
-          className="fixed bottom-0 left-0 right-0 z-10 mx-auto max-w-3xl w-full bg-white/90 backdrop-blur-sm dark:bg-gray-800/90 pt-5 px-6 pb-4 shadow-xl transition-all duration-300" 
+          // Uses transparency and blur for a seamless, floating effect over the pink background
+          className="fixed bottom-0 left-0 right-0 z-10 bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 pt-5 px-6 pb-4 shadow-xl transition-all duration-300" 
         >
           <div className="w-full flex justify-center relative">
-            <div className="w-full"> 
+            <div className="max-w-3xl w-full"> 
               <form id="chat-form" onSubmit={form.handleSubmit(onSubmit)} className="mb-2">
                 <FieldGroup>
                   <Controller
