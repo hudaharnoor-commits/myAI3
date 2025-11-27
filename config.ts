@@ -42,7 +42,7 @@ Tell me: 
 2) Where are you going (office, campus, mall, restaurant, club, airport, etc.)?
 3) Any pieces you want to wear or avoid?
 
-I’ll build 1–3 outfits using ONLY clothes from your own closet and share the image links for each item.
+I’ll build 1–3 outfits using ONLY clothes from your own closet and share outfit ideas.
 `;
 
 export const CLEAR_CHAT_TEXT = "New";
