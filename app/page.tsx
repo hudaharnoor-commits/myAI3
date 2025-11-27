@@ -84,9 +84,6 @@ export default function Chat() {
   useEffect(() => {
     setIsClient(true);
     setDurations(stored.durations);
-    // Setting messages again here is safe but might cause a flicker if initialMessages was already passed to useChat.
-    // However, keeping it for the intended logic flow from the original code.
-    // A cleaner approach would be to only use useChat's initial state if stored.messages is non-empty.
     if (stored.messages.length > 0) {
       setMessages(stored.messages);
     }
@@ -148,35 +145,35 @@ export default function Chat() {
   }
 
   return (
-    <div className="flex h-screen items-center justify-center font-sans bg-background dark:bg-black">
-      <main className="w-full h-screen relative bg-background dark:bg-black">
-        {/* === PROFESSIONAL HEADER === */}
+    <div className="flex h-screen items-center justify-center font-sans bg-gray-50 dark:bg-gray-950">
+      <main className="w-full h-screen relative bg-gray-50 dark:bg-gray-950">
+        
+        {/* === ELEGANT HEADER === */}
         <div 
-          className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm dark:bg-black/80 shadow-md border-b border-border/50" 
-          // Replaced gradient with backdrop blur and border
+          className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg dark:bg-gray-900/80 shadow-lg border-b border-gray-200 dark:border-gray-800 transition-all duration-300"
         >
-          <div className="relative">
+          <div className="relative py-3"> {/* Added vertical padding */}
             <ChatHeader>
               <ChatHeaderBlock />
-              <ChatHeaderBlock className="justify-center items-center gap-2"> {/* Added gap-2 */}
+              <ChatHeaderBlock className="justify-center items-center gap-3"> {/* Increased gap for style */}
                 <Avatar
-                  className="size-9 ring-2 ring-primary border-2 border-background" // Slightly larger, ring for emphasis
+                  className="size-11 ring-2 ring-primary border-4 border-white dark:border-gray-900 shadow-md" // Larger, prominent avatar with shadow
                 >
                   <AvatarImage src="/logo.png" />
                   <AvatarFallback>
-                    <Image src="/logo.png" alt="Logo" width={36} height={36} />
+                    <Image src="/logo.png" alt="Logo" width={44} height={44} />
                   </AvatarFallback>
                 </Avatar>
-                <p className="tracking-tight font-semibold text-lg text-foreground">Chat with **{AI_NAME}**</p>
+                <p className="tracking-tight font-extrabold text-xl text-gray-800 dark:text-white">Chat with **{AI_NAME}**</p>
               </ChatHeaderBlock>
               <ChatHeaderBlock className="justify-end">
                 <Button
-                  variant="ghost" // Changed to ghost for a cleaner look
+                  variant="outline" // Using outline for a sophisticated, high-contrast button
                   size="sm"
-                  className="cursor-pointer text-sm font-medium hover:bg-muted" // Enhanced hover state
+                  className="cursor-pointer text-sm font-medium hover:bg-primary/10 transition-colors duration-200 rounded-full border-2" 
                   onClick={clearChat}
                 >
-                  <Plus className="size-4 mr-2" />
+                  <Plus className="size-4 mr-1" />
                   **New Chat**
                 </Button>
               </ChatHeaderBlock>
@@ -185,35 +182,34 @@ export default function Chat() {
         </div>
 
         {/* === MESSAGE WALL CONTAINER === */}
-        {/* Adjusted padding to accommodate the header and footer */}
-        <div className="h-screen overflow-y-auto px-5 w-full pt-[96px] pb-[160px]"> 
+        {/* Increased padding to accommodate the larger header and footer */}
+        <div className="h-screen overflow-y-auto px-5 w-full pt-[110px] pb-[160px]"> 
           <div className="flex flex-col items-center justify-end min-h-full">
             {isClient ? (
               <>
                 <MessageWall messages={messages} status={status} durations={durations} onDurationChange={handleDurationChange} />
                 {status === "submitted" && (
-                  // Loading indicator centered and aligned with message wall content
+                  // Loading indicator aligned with message wall content
                   <div className="flex justify-start max-w-3xl w-full pt-4"> 
-                    <Loader2 className="size-4 animate-spin text-primary" />
+                    <Loader2 className="size-5 animate-spin text-primary" />
                   </div>
                 )}
               </>
             ) : (
               <div className="flex justify-center max-w-2xl w-full">
-                <Loader2 className="size-5 animate-spin text-primary" /> {/* Larger loader for initial load */}
+                <Loader2 className="size-6 animate-spin text-primary" /> 
               </div>
             )}
           </div>
         </div>
 
-        {/* === STYLISH INPUT FOOTER === */}
+        {/* === SLEEK INPUT FOOTER === */}
         <div 
-          className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm dark:bg-black/80 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] border-t border-border/50" 
-          // Replaced gradient with backdrop blur and top shadow
+          className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg dark:bg-gray-900/80 shadow-[0_-10px_30px_rgba(0,0,0,0.08)] dark:shadow-[0_-10px_30px_rgba(255,255,255,0.05)] border-t border-gray-200 dark:border-gray-800" 
         >
-          <div className="w-full px-5 pt-5 pb-1 items-center flex justify-center relative">
+          <div className="w-full px-5 pt-6 pb-2 items-center flex justify-center relative">
             <div className="max-w-3xl w-full">
-              <form id="chat-form" onSubmit={form.handleSubmit(onSubmit)} className="mb-3">
+              <form id="chat-form" onSubmit={form.handleSubmit(onSubmit)} className="mb-4">
                 <FieldGroup>
                   <Controller
                     name="message"
@@ -223,13 +219,13 @@ export default function Chat() {
                         <FieldLabel htmlFor="chat-form-message" className="sr-only">
                           Message
                         </FieldLabel>
-                        <div className="relative"> {/* Removed h-13 and let the input define the height */}
+                        <div className="relative">
                           <Input
                             {...field}
                             id="chat-form-message"
-                            // Enhanced styling for the input field: subtle shadow, focus ring
-                            className="h-14 pr-16 pl-5 bg-card border border-input/50 focus-visible:ring-primary shadow-sm rounded-xl transition-all duration-300" 
-                            placeholder="Type your message here..."
+                            // Highly rounded, large input field for premium look
+                            className="h-16 pr-20 pl-6 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-700 focus-visible:ring-primary shadow-xl rounded-2xl transition-all duration-300 placeholder:text-gray-500 text-lg" 
+                            placeholder="Ask me for style advice, color palettes, or outfit ideas..."
                             disabled={status === "streaming"}
                             aria-invalid={fieldState.invalid}
                             autoComplete="off"
@@ -243,18 +239,18 @@ export default function Chat() {
                           {/* Send button styling */}
                           {(status == "ready" || status == "error") && (
                             <Button
-                              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 transition-all duration-300" // Centered button, fixed size
+                              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 transition-all duration-300 shadow-md"
                               type="submit"
                               disabled={!field.value.trim()}
                               size="icon"
                             >
-                              <ArrowUp className="size-4" />
+                              <ArrowUp className="size-5" />
                             </Button>
                           )}
                           {/* Stop button styling */}
                           {(status == "streaming" || status == "submitted") && (
                             <Button
-                              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 bg-destructive hover:bg-destructive/90 transition-all duration-300" // Red stop button
+                              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full h-10 w-10 bg-destructive hover:bg-destructive/90 transition-all duration-300 shadow-md"
                               size="icon"
                               onClick={() => {
                                 stop();
@@ -272,13 +268,13 @@ export default function Chat() {
             </div>
           </div>
           
-          {/* === FOOTER LINKS/INFO === */}
-          <div className="w-full px-5 py-3 items-center flex justify-center text-xs text-muted-foreground border-t border-border/30">
-            <p className="text-center">
-              © {new Date().getFullYear()} {OWNER_NAME}&nbsp;
-              <Link href="/terms" className="underline underline-offset-2 hover:text-foreground/80 transition-colors">Terms of Use</Link>
+          {/* === PROFESSIONAL FOOTER LINKS === */}
+          <div className="w-full px-5 py-3 items-center flex justify-center text-xs text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-gray-800">
+            <p className="text-center font-medium">
+              © {new Date().getFullYear()} {OWNER_NAME}&nbsp;·&nbsp;
+              <Link href="/terms" className="underline underline-offset-2 hover:text-primary transition-colors">Terms of Use</Link>
               &nbsp;·&nbsp;Powered by&nbsp;
-              <Link href="https://ringel.ai/" className="underline underline-offset-2 hover:text-foreground/80 transition-colors">Ringel.AI</Link>
+              <Link href="https://ringel.ai/" className="underline underline-offset-2 hover:text-primary transition-colors">Ringel.AI</Link>
             </p>
           </div>
         </div>
